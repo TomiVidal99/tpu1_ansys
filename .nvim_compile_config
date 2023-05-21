@@ -1,0 +1,6 @@
+# Comando para testeo SIN gráficos
+sh test.sh
+# Comando para testeo CON gráficos
+sh test.sh 1
+# Comando para compilar todo y finalizar el trabajo.
+sh compile.sh

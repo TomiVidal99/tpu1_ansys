@@ -1,0 +1,8 @@
+!.gitignore
+.git
+.aux
+INFORME/*
+!INFORME/main.tex
+!INFORME/ieeeconf.cls
+ENTREGA
+figures
