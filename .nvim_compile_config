@@ -4,3 +4,5 @@ sh test.sh
 sh test.sh 1
 # Comando para compilar todo y finalizar el trabajo.
 sh compile.sh
+# Abrir archivo pdf
+xdg-open ASyS2023_PU1-1.pdf
