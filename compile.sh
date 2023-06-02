@@ -36,9 +36,9 @@ fi
 
 # Copiar las dependencias
 rm -rf ./ENTREGA/* # Borrar archivos antiguos.
-zip -u ./ENTREGA/VIDAL_SCRIPTS_OPCION_E.zip main.m
-zip -u ./ENTREGA/VIDAL_SCRIPTS_OPCION_E.zip SCRIPTS
+zip -u ./ENTREGA/AnSyS-pu1-scripts-VIDAL.zip main.m
+zip -u ./ENTREGA/AnSyS-pu1-scripts-VIDAL.zip SCRIPTS
 cp ./INFORME/main.pdf ./ENTREGA/
-mv ./ENTREGA/main.pdf ./ENTREGA/VIDAL_INFORME_OPCION_E_.pdf
+mv ./ENTREGA/main.pdf ./ENTREGA/AnSyS-pu1-VIDAL.pdf
 
 echo Finalizado.
