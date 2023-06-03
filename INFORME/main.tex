@@ -60,7 +60,8 @@
   {\it An\'alisis de Sistemas y Se\~{n}ales}\\
   {\it Facultad de Ingenier\'ia, UNLP, La Plata, Argentina.}\\
   {\it 21 de Mayo, 2023.}
-}                                            % <-this % stops a space
+}
+% <-this % stops a space
 
 
 % comienzo
@@ -93,69 +94,165 @@
 En el presente se desarrollan detalladamente los m\'etodos y t\'ecnicas empleadas para la resoluci\'on de sistemas discretos, en particular de tipo lineal e invariante al desplazamiento (o en el tiempo), haciendo uso de la herramienta \href{https://octave.org/}{Octave}. \'Estos sistemas est\'an descriptos en ecuaciones en diferencias\footnote{ver ASyS2023\_PU1-1.pdf.}.
 % Se resulve el trabajo pr\'actico dado a partir de los conocimientos y algoritmos aprendidos en las clases de Análisis de Sistemas y Se\~{n}ales. Para lo cual se cre\'o un script (main.m) que ejecuta todos los comandos y alogritmos pertinentes para generar los datos y gr\'aficos que se muestran posteriormente. Adem\'as todo el trabajo se encuentra hosteado en un \href{https://github.com/TomiVidal99/tpu1_ansys}{repositorio}\footnote{El repositorio se encuentra privado, para acceder hay que enviar un email a \href{mailto:vidal.tomas@alu.ing.unlp.edu.ar}{vidal.tomas@alu.ing.unlp.edu.ar}} de Github\footnote{Servicio basado en la nube que ayuda a desarrolladores a guardar y gestinonar c\'odigo.} por si el lector quiere indagar profundamente en el c\'odigo y en los algoritmos.
 
-\section{Inciso 1}
+\section{Implementaci\'on de la TFTD}
+\subsection{Marco Te\'orico} \label{subsec:TFTD}
+La transformada de Fourier de tiempo discreto (TFTD) de una se\~{n}al dada se define como (Ref. \cite{tftd_tp5} y \cite{tftd_teoria})
+\[
+  TFTD\{x[n]\} = X(e^{j2{\pi}s}) = \sum_{-\infty}^{\infty}{x[n]e^{-j2{\pi}sn}}
+\]
+Pero como no se pueden computar infinitos t\'erminos se debe hacer una aproximaci\'on de la siguiente manera
+\[
+  \hat{X}(e^{j2{\pi}s}) \approx \sum_{n=-K}^{K}{x[n]e^{-j2{\pi}sn}}
+\]
+Aproximar desde $n=-K$ hasta $n=K$ es lo mismo que multiplicar toda la se\~nal por un caj\'on y sumarla desde $-\infty$ hasta $\infty$, es decir que el efecto de aproximar es despreciar informaci\'on de la se\~nal.
+\[
+  \sum_{n=-K}^{K}{x[n]e^{-j2{\pi}sn}} = \sum_{n=-\infty}^{\infty}{x[n]\sqcap[\frac{n}{2K}]e^{-j2{\pi}sn}}
+\]
 
-\subsection{Obtenci\'on de la ecuaci\'on del sistema}
-Analizando el diagrama en bloques provisto se obtiene la siguiente ecuaci\'on que describe su comportamiento.
-\begin{equation} \label{eq:y}
-  y[n] = \frac{1}{2}x[n] + \frac{1}{2}x[n-1] + R^{L}y[n-L]
-\end{equation}
-Se obtiene la transferencia del sistema transformando ec. \ref{eq:y} con la transformanda $Z$.
-\begin{equation} \label{eq:Hz}
-  H(z) = \frac{Y(z)}{X(z)} = (\frac{1}{2})\frac{1 + z^{-1}}{1 - R^{L}z^{-L}}
-\end{equation}
-
-Mediante la funci\'on de transferencia se obtiene la respuesta en frecuencia (fig. \ref{fig:HfreqResp}) del sistema de la siguiente manera
-\begin{equation*}
-  H(e^{j2{\pi}s}) = (\frac{1}{2})\frac{1 + {e^{-j2{\pi}s}}}{1 - R^{L}{e^{-j2{\pi}sL}}}
-\end{equation*}
-% TODO hacer una animación para diferentes valores de L y R
-\image{HfreqResp}{Respuesta en frecuencia del sistema (ec. \ref{eq:y})}
-
-\subsection{Polos y ceros de H(z)}
-Se grafican los polos y los ceros de la funci\'on de transferencia (ec. \ref{eq:Hz}) con el siguiente c\'odigo
-% Codigo
-% TODO: actualizar esto con el correspondiente codigo
+\subsection{Algoritmo en Octave}
 \begin{lstlisting}[style=Matlab-editor]
-% tf y pzmap son del paquete de control
-pkg load control;
-% Se define el tipo de z
-z = tf('z', Ts);
-% Se define la funcion de transferencia H(z) como H
-H = @(r, l) (1/2)*( (1+z^(-1)) / (1-(r^l)*(z^(-l))) );
-% Se define una secuencia aleatoria uniforme de longitud 100
-x = rand(100);
-L = length(x);
-R = .1;
-% Se grafican los zeros y polos de H
-pzmap(H(R, L));
+function [s, tftd] = TFTD(
+  n, signal,
+  defaultStep=1e-3)
+  ds = defaultStep;
+  s = [-.5:ds:.5];
+  tftd = zeros(size(s));
+  for k = 1:length(s)
+    tftd(k) = sum(signal.*exp(-1j*2*pi*s(k)*n));
+  end
+end
 \end{lstlisting}
 
-\image{Hz-pzmap-1}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=10}
-\image{Hz-pzmap-2}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=5}
-\image{Hz-pzmap-3}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=1}
-\image{Hz-pzmap-4}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=0,5}
-\image{Hz-pzmap-5}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=0,1}
-\image{Hz-pzmap-6}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=0,01}
+\subsection{Prueba del Algoritmo}
+Para poder hacer uso del algoritmo primero se realiz\'o el c\'alculo analítico de la TFTD de las siguientes se\~{n}ales
+\[
+  Delta\ desplazada = \delta[n-n_o] \supset e^{-j2{\pi}sn_o}
+\]
+\[
+  Tri\acute{a}ngulo = \wedge[n] \supset sinc^2[n]
+\]
+Y luego se emple\'o el siguiente c\'odigo para verificar que las aproximaciones sean lo ``suficientemente`` buenas
 
-Haciendo un an\'alisis de la ec. \ref{eq:Hz} podemos observar que el numerador tiende a cero cuando $z$ tiende a $-1$, y el denominador cuando $z$ tiende a $R$; por lo que los polos se encuentran en la circunferencia de radio $R$ y son L (en cantidad), adem\'as tiene un cero en $z=-1$, que es acorde con lo que se ver en los gr\'aficos anteriores.
+\begin{lstlisting}[style=Matlab-editor]
+N = [1:100];
 
-\subsection{Estabilidad del sistema}
-Para que el sistema sea estable y causal todos los polos se deben encontrar dentro de la circunferencia de radio unitario. Por lo que para valores de $0<R<1$ el sistema es estable.
+% Triangulo desplazado 50 y de base 5.
+Senial1 = tri((N-length(N)/2)/5);
+[s1, tftd1] = TFTD(N, Senial1);
 
-\section{Inciso 2}
-\subsection{Filtro de pasatodo}
-Obtengo la ecuación (\ref{eq:yfiltro}) que describe el sistema a partir de los diagramas en bloques dados.
-\begin{equation} \label{eq:yfiltro}
-  y[n] = a.x[n] + x[n-1] - a.y[n-1]
-\end{equation}
-Calculo la función de transferencia a partir de la ecuación \ref{eq:yfiltro}.
-\begin{equation} \label{eq:Hfiltro}
-  H(z) = \frac{a + z^{-1}}{1+a.z^{-1}}
-\end{equation}
-\subsection{Fase del filtro}
-En el siguiente se muestran diferentes fases de la respuesta en frecuencia del filtro (ec \ref{eq:yfiltro}).
-\image{HPhiA}{Diferentes fases de la respuesta en frecuencia del filtro (ec. \ref{eq:yfiltro}).}
+% Delta desplazada 20.
+Senial2 = zeros(size(N));
+Senial2(20) = 1;
+[s2, tftd2] = TFTD(N, Senial2);
+\end{lstlisting}
+
+De lo cual se obtuvieron los siguientes resultados (Fig. \ref{fig:triangulo_tftd} y \ref{fig:delta_tftd}), que son acorde a los c\'alculos analíticos, por lo que se concluye que el algoritmo implementado es adecuado para esta aplicaci\'on.
+
+% Resultados gráficos
+\image{triangulo_tftd}{Plot de la Se\~{n}al tri\'angulo y el m\'odulo y fase de su TFTD.}
+\image{delta_tftd}{Plot de la Se\~{n}al delta y el m\'odulo y fase de su TFTD.}
+% Entonces haciendo uso del algoritmo explicado previamente (ver \ref{commands_tftf_signal}) se aproxim\'o la TFTD de la se\~{n}al dada (ver \ref{fig:senial_y_su_tftd}), de lo cual se puede observar que la se\~{n}al est\'a compuesta por otras dos: una de baja frecuencia preponderante, y otra de baja que influye menos (ver Fig. \ref{fig:tftd_senial_freqs}).
+% \image{senial_y_su_tftd}{Plot de la Se\~{n}al y el m\'odulo y fase de su TFTD.}
+% Grafico de la frecuencia, a la que se le señala las altas y bajas frecuencias.
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.43\textwidth]{figures/senial_y_su_tftd_indicating.png}
+% \caption{Se indica las frecuencias predominantes en la TFTD de la se\~nal.}
+% \label{fig:tftd_senial_freqs}
+% \end{figure}
+% \subsection{Comandos para la obtenci\'on de la se\~{n}al y su TFTD}
+% \label{commands_tftf_signal}
+% \begin{lstlisting}[style=Matlab-editor]
+% [n, x] = senial(698544);
+% [s, tftd] = TFTD(n, x, 1e-4);
+% \end{lstlisting}
+
+
+% \section{Implementaci\'on de TFTD en Octave}
+% Se cre\'o un \textit{script}\footnote{El \textit{script} se puede encontrar como \textit{'TFTD.m'}} el cual calcula la TFTD\footnote{Transformada de Fourier de tiempo discreto} de una se\~nal. Para corroborar que funciona correctamente se calcularon las TFTD de los siguientes pares conocidos.
+% \[
+%   TFTD\{x[n]\} = X(e^{j2{\pi}s}) = \sum_{n=-\infty}^{\infty}{x[n]e^{-j2{\pi}sn}}
+% \]
+%
+% \image{senial}{Se\~nal provista.}
+%
+% \section{Procesamiento de la se\~nal dada}
+% Se obtuvo la se\~nal dada a partir de los comandos provistos\footnote{use el comando 'help senial' para m\'as informaci\'on.}, y como se puede apreciar en el gr\'afico (fig. \ref{fig:senial}) posee componentes de alta y baja frecuencia.
+% \image{senial}{Se\~nal provista.}
+
+% \subsection{}
+
+% \subsection{}
+% Analizando el diagrama en bloques provisto se obtiene la siguiente ecuaci\'on que describe su comportamiento.
+% \begin{equation} \label{eq:y}
+%   y[n] = \frac{1}{2}x[n] + \frac{1}{2}x[n-1] + R^{L}y[n-L]
+% \end{equation}
+% Se obtiene la transferencia del sistema transformando ec. \ref{eq:y} con la transformanda $Z$.
+% \begin{equation} \label{eq:Hz}
+%   H(z) = \frac{Y(z)}{X(z)} = (\frac{1}{2})\frac{1 + z^{-1}}{1 - R^{L}z^{-L}}
+% \end{equation}
+%
+% \subsection{Obtenci\'on de la ecuaci\'on del sistema}
+% Analizando el diagrama en bloques provisto se obtiene la siguiente ecuaci\'on que describe su comportamiento.
+% \begin{equation} \label{eq:y}
+%   y[n] = \frac{1}{2}x[n] + \frac{1}{2}x[n-1] + R^{L}y[n-L]
+% \end{equation}
+% Se obtiene la transferencia del sistema transformando ec. \ref{eq:y} con la transformanda $Z$.
+% \begin{equation} \label{eq:Hz}
+%   H(z) = \frac{Y(z)}{X(z)} = (\frac{1}{2})\frac{1 + z^{-1}}{1 - R^{L}z^{-L}}
+% \end{equation}
+%
+% Mediante la funci\'on de transferencia se obtiene la respuesta en frecuencia (fig. \ref{fig:HfreqResp}) del sistema de la siguiente manera
+% \begin{equation*}
+%   H(e^{j2{\pi}s}) = (\frac{1}{2})\frac{1 + {e^{-j2{\pi}s}}}{1 - R^{L}{e^{-j2{\pi}sL}}}
+% \end{equation*}
+% % TODO hacer una animación para diferentes valores de L y R
+% \image{HfreqResp}{Respuesta en frecuencia del sistema (ec. \ref{eq:y})}
+%
+% \subsection{Polos y ceros de H(z)}
+% Se grafican los polos y los ceros de la funci\'on de transferencia (ec. \ref{eq:Hz}) con el siguiente c\'odigo
+% % Codigo
+% % TODO: actualizar esto con el correspondiente codigo
+% \begin{lstlisting}[style=Matlab-editor]
+% % tf y pzmap son del paquete de control
+% pkg load control;
+% % Se define el tipo de z
+% z = tf('z', Ts);
+% % Se define la funcion de transferencia H(z) como H
+% H = @(r, l) (1/2)*( (1+z^(-1)) / (1-(r^l)*(z^(-l))) );
+% % Se define una secuencia aleatoria uniforme de longitud 100
+% x = rand(100);
+% L = length(x);
+% R = .1;
+% % Se grafican los zeros y polos de H
+% pzmap(H(R, L));
+% \end{lstlisting}
+%
+% \image{Hz-pzmap-1}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=10}
+% \image{Hz-pzmap-2}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=5}
+% \image{Hz-pzmap-3}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=1}
+% \image{Hz-pzmap-4}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=0,5}
+% \image{Hz-pzmap-5}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=0,1}
+% \image{Hz-pzmap-6}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=0,01}
+%
+% Haciendo un an\'alisis de la ec. \ref{eq:Hz} podemos observar que el numerador tiende a cero cuando $z$ tiende a $-1$, y el denominador cuando $z$ tiende a $R$; por lo que los polos se encuentran en la circunferencia de radio $R$ y son L (en cantidad), adem\'as tiene un cero en $z=-1$, que es acorde con lo que se ver en los gr\'aficos anteriores.
+%
+% \subsection{Estabilidad del sistema}
+% Para que el sistema sea estable y causal todos los polos se deben encontrar dentro de la circunferencia de radio unitario. Por lo que para valores de $0<R<1$ el sistema es estable.
+%
+% \section{Inciso 2}
+% \subsection{Filtro de pasatodo}
+% Obtengo la ecuación (\ref{eq:yfiltro}) que describe el sistema a partir de los diagramas en bloques dados.
+% \begin{equation} \label{eq:yfiltro}
+%   y[n] = a.x[n] + x[n-1] - a.y[n-1]
+% \end{equation}
+% Calculo la función de transferencia a partir de la ecuación \ref{eq:yfiltro}.
+% \begin{equation} \label{eq:Hfiltro}
+%   H(z) = \frac{a + z^{-1}}{1+a.z^{-1}}
+% \end{equation}
+% \subsection{Fase del filtro}
+% En el siguiente se muestran diferentes fases de la respuesta en frecuencia del filtro (ec \ref{eq:yfiltro}).
+% \image{HPhiA}{Diferentes fases de la respuesta en frecuencia del filtro (ec. \ref{eq:yfiltro}).}
 
 \begin{thebibliography}{99}
 

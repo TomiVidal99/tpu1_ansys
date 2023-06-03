@@ -11,9 +11,13 @@ addpath('./AnSyS2023_PU1_m');
 
 % Se definen variables globales.
 % packages();
-% global_variables();
+global_variables();
+disp("lkdsjsalkdja");
+consolelog(cstrcat("exists: ", GENERAL_GRAPH_PATHS));
 % delta_();
 % equations();
+
+consolelog("LASKDJLAKD");
 
 % Se resuelve el ejercicio 1 inciso 1
 ej1_inc1();
