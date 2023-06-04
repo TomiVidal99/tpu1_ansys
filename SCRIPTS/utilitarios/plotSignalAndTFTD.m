@@ -9,7 +9,7 @@ function plotSignalAndTFTD(
   )
   % Función utilitaria que hace una figura con el plot de una señal dada y dos subplots con su TFTD en módulo y fase.
 
-  dispc(cstrcat("Creando gráfico de '", signalName, "' \n"), "blue");
+  dispc(cstrcat("Creando gráfico de '", strrep(signalName, "\\", "\\\\"), "' \n"), "blue");
 
   % Creo una nueva ventana independiente.
   figureNumber = figure('name', signalName);

@@ -91,12 +91,13 @@
 \pagestyle{empty}
 
 \section{INTRODUCCCI\'ON}
+% TODO
 En el presente se desarrollan detalladamente los m\'etodos y t\'ecnicas empleadas para la resoluci\'on de sistemas discretos, en particular de tipo lineal e invariante al desplazamiento (o en el tiempo), haciendo uso de la herramienta \href{https://octave.org/}{Octave}. \'Estos sistemas est\'an descriptos en ecuaciones en diferencias\footnote{ver ASyS2023\_PU1-1.pdf.}.
 % Se resulve el trabajo pr\'actico dado a partir de los conocimientos y algoritmos aprendidos en las clases de Análisis de Sistemas y Se\~{n}ales. Para lo cual se cre\'o un script (main.m) que ejecuta todos los comandos y alogritmos pertinentes para generar los datos y gr\'aficos que se muestran posteriormente. Adem\'as todo el trabajo se encuentra hosteado en un \href{https://github.com/TomiVidal99/tpu1_ansys}{repositorio}\footnote{El repositorio se encuentra privado, para acceder hay que enviar un email a \href{mailto:vidal.tomas@alu.ing.unlp.edu.ar}{vidal.tomas@alu.ing.unlp.edu.ar}} de Github\footnote{Servicio basado en la nube que ayuda a desarrolladores a guardar y gestinonar c\'odigo.} por si el lector quiere indagar profundamente en el c\'odigo y en los algoritmos.
 
-\section{Implementaci\'on de la TFTD}
+\section{Implementaci\'on de la \textbf{TFTD} en Octave}
 \subsection{Marco Te\'orico} \label{subsec:TFTD}
-La transformada de Fourier de tiempo discreto (TFTD) de una se\~{n}al dada se define como (Ref. \cite{tftd_tp5} y \cite{tftd_teoria})
+La \textbf{transformada de Fourier de tiempo discreto} (\textbf{TFTD}) de una se\~{n}al dada se define como (Ref. \cite{tftd_tp5} y \cite{tftd_teoria})
 \[
   TFTD\{x[n]\} = X(e^{j2{\pi}s}) = \sum_{-\infty}^{\infty}{x[n]e^{-j2{\pi}sn}}
 \]
@@ -110,7 +111,8 @@ Aproximar desde $n=-K$ hasta $n=K$ es lo mismo que multiplicar toda la se\~nal p
 \]
 
 \subsection{Algoritmo en Octave}
-\begin{lstlisting}[style=Matlab-editor]
+\label{tftd_function}
+\begin{lstlisting}[style=Matlab-editor] 
 function [s, tftd] = TFTD(
   n, signal,
   defaultStep=1e-3)
@@ -126,12 +128,12 @@ end
 \subsection{Prueba del Algoritmo}
 Para poder hacer uso del algoritmo primero se realiz\'o el c\'alculo analítico de la TFTD de las siguientes se\~{n}ales
 \[
-  Delta\ desplazada = \delta[n-n_o] \supset e^{-j2{\pi}sn_o}
+  Delta = \delta[\textbf{n}-n_o] \supset e^{-j2{\pi}\textbf{s}n_o}
 \]
 \[
-  Tri\acute{a}ngulo = \wedge[n] \supset sinc^2[n]
+  Tri\acute{a}ngulo = \wedge[\frac{\textbf{n}-b}{a}] \supset |a|.e^{-j2{\pi}\textbf{s}\frac{a}{b}}.sinc^2(a\textbf{s})
 \]
-Y luego se emple\'o el siguiente c\'odigo para verificar que las aproximaciones sean lo ``suficientemente`` buenas
+Y luego se emple\'o el siguiente c\'odigo para verificar que las aproximaciones sean lo ``suficientemente'' buenas
 
 \begin{lstlisting}[style=Matlab-editor]
 N = [1:100];
@@ -146,18 +148,24 @@ Senial2(20) = 1;
 [s2, tftd2] = TFTD(N, Senial2);
 \end{lstlisting}
 
-De lo cual se obtuvieron los siguientes resultados (Fig. \ref{fig:triangulo_tftd} y \ref{fig:delta_tftd}), que son acorde a los c\'alculos analíticos, por lo que se concluye que el algoritmo implementado es adecuado para esta aplicaci\'on.
+De lo cual se obtuvieron los siguientes resultados (Fig. \ref{fig:triangulo_tftd} y \ref{fig:delta_tftd}), que son acorde a los c\'alculos analíticos, por lo que se concluye que el algoritmo implementado es adecuado para \'esta aplicaci\'on.
 
 % Resultados gráficos
-\image{triangulo_tftd}{Plot de la Se\~{n}al tri\'angulo y el m\'odulo y fase de su TFTD.}
-\image{delta_tftd}{Plot de la Se\~{n}al delta y el m\'odulo y fase de su TFTD.}
-% Entonces haciendo uso del algoritmo explicado previamente (ver \ref{commands_tftf_signal}) se aproxim\'o la TFTD de la se\~{n}al dada (ver \ref{fig:senial_y_su_tftd}), de lo cual se puede observar que la se\~{n}al est\'a compuesta por otras dos: una de baja frecuencia preponderante, y otra de baja que influye menos (ver Fig. \ref{fig:tftd_senial_freqs}).
-% \image{senial_y_su_tftd}{Plot de la Se\~{n}al y el m\'odulo y fase de su TFTD.}
+\image{triangulo_tftd}{Se\~{n}al tri\'angulo y el m\'odulo y fase de su TFTD num\'erica.}
+\image{delta_tftd}{Se\~{n}al delta y el m\'odulo y fase de su TFTD num\'erica.}
+\image{delta_tftd_analitica}{Se\~{n}al delta y el m\'odulo y fase de su TFTD anal\'itica.}
+\image{triangulo_tftd_analitica}{Se\~{n}al tri\'angulo y el m\'odulo y fase de su TFTD anal\'itica.}
+
+\section{TFTD de la sen\~al provista}
+Entonces haciendo uso del algoritmo explicado previamente (ver \ref{tftd_function}) se aproxim\'o la TFTD de la se\~{n}al dada (ver \ref{fig:senial_y_su_tftd}), de lo cual se puede observar que la se\~{n}al est\'a compuesta por otras dos: una de baja frecuencia preponderante, y otra de baja que influye menos (ver Fig. \ref{fig:tftd_senial_freqs}).
+\image{senial_y_su_tftd}{Plot de la Se\~{n}al y el m\'odulo y fase de su TFTD.}
+% \image{tftd_senial_freqs}{Se indica las frecuencias predominantes en la TFTD de la se\~nal.}
+
 % Grafico de la frecuencia, a la que se le señala las altas y bajas frecuencias.
 % \begin{figure}[H]
 % \centering
 % \includegraphics[width=0.43\textwidth]{figures/senial_y_su_tftd_indicating.png}
-% \caption{Se indica las frecuencias predominantes en la TFTD de la se\~nal.}
+% \caption{}
 % \label{fig:tftd_senial_freqs}
 % \end{figure}
 % \subsection{Comandos para la obtenci\'on de la se\~{n}al y su TFTD}

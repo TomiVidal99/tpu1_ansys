@@ -22,7 +22,23 @@ plotSignalAndTFTD(
 );
 plotSignalAndTFTD(
   N0, Senial2, s2, tftd2,
-  'Delta',
+  '\delta[n-n_0]',
   getPlotPath("delta_tftd", GENERAL_GRAPH_PATHS),
+  savePlots
+);
+
+% Defino los calculos analiticos de las transformadas
+tftdAnaliticSenial1 = @(s) exp(-j*2*pi*20.*s);
+plotSignalAndTFTD(
+  N0, Senial1, s1, tftdAnaliticSenial1(s1),
+  '\delta[n-20]',
+  getPlotPath("delta_tftd_analitica", GENERAL_GRAPH_PATHS),
+  savePlots
+);
+tftdAnaliticSenial2 = @(s) 5.*exp(-2*pi*10.*s).*(sinc(5.*s).^2);
+plotSignalAndTFTD(
+  N0, Senial2, s2, tftdAnaliticSenial2(s2),
+  '\Lambda[5n-50]',
+  getPlotPath("triangulo_tftd_analitica", GENERAL_GRAPH_PATHS),
   savePlots
 );
