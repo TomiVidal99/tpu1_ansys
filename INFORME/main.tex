@@ -262,8 +262,10 @@ Y analizando las respuestas en frecuencias, el sistema 1 (Fig. \ref{fig:resp_sis
 \image{resp_sist_4}{Respuesta impulsional y en frecuencia del sistema 4.}
 
 \section{C\'alculo num\'erico de las respuestas en impulsionales y en frecuencias de los sistemas}
+A partir de las ecuaciones de los sistemas (\ref{eq1}, \ref{eq2}, \ref{eq3} y \ref{eq4}) se obtuvieron los c\'alculos num\'ericos de las respuestas impusionales, tomando como entrada a los sistemas una delta; y tambi\'en la respuesta en frecuencia a partir de usar el algoritmo de la \textbf{TFTD} (ver \ref{tftd_function}) en la respuesta impulsional obtenida previamente.
+
 \subsection{Implementaci\'on de los sistemas en Octave}
-Para poder implementar cada sistema se codificaron funciones que describen a cada uno, luego se defini\'o una funci\'on an\'onima delta que representa una delta de kronocker ($\delta[n]$) y, por \'ultimo, un vector N que define el instante de la señal, de esta manera fue como se obtuvieron los siguientes gr\'aficos.
+Para poder implementar cada sistema se codificaron funciones que describen a cada uno, luego se defini\'o una funci\'on an\'onima delta que representa una delta de kronocker ($\delta[n]$) y, por \'ultimo, un vector N que define el instante de la señal
 
 \subsection{C\'odigo}
 \begin{lstlisting}[style=Matlab-editor]
@@ -287,9 +289,19 @@ y4 = @(x, n) Y4(x, n);
 % Defino un impulso.
 delta = @(n) (n==0);
 
-N = [-50:50];
+N = [-20:20];
 
 \end{lstlisting}
+
+\subsection{Conclusiones sobre los resultados num\'ericos}
+Observando los resultados que se pueden apreciar en los siguiente gr\'aficos (Fig. \ref{fig:num_resp_sist_1}, \ref{fig:num_resp_sist_2}, \ref{fig:num_resp_sist_3} y \ref{fig:num_resp_sist_4}) se concluye que las implementaci\'ones num\'ericas son tan buenas como las anal\'iticas y, adem\'as, indican que los c\'alculos anal\'iticos son correctos.
+\image{num_resp_sist_1}{Respuesta impulsional y en frecuencia del sistema 1 (num\'erica).}
+\image{num_resp_sist_2}{Respuesta impulsional y en frecuencia del sistema 2 (num\'erica).}
+\image{num_resp_sist_3}{Respuesta impulsional y en frecuencia del sistema 3 (num\'erica).}
+\image{num_resp_sist_4}{Respuesta impulsional y en frecuencia del sistema 4 (num\'erica).}
+
+\section{Procesamiento de \textit{``senial''} con los sistemas}
+Se emplean los sistemas \ref{eq1}, \ref{eq2}, \ref{eq3} y \ref{eq4} como filtros para procesar la se\~nal dada \textit{``senial''}; para ello se usa como entrada a los mismos \textit{``senial''}.
 
 
 \begin{thebibliography}{99}
