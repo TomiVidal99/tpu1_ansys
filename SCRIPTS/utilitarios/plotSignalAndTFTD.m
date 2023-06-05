@@ -36,7 +36,7 @@ function plotSignalAndTFTD(
   if (iscell(overrideSignalXlabel) == 0)
     subplotConfig(signalName, 'n', cstrcat(signalName, '[n]'), savePlots);
   else 
-    subplotConfig(signalName, overrideSignalXlabel{1}, cstrcat(signalName, overrideSignalXlabel{2}), savePlots);
+    subplotConfig(signalName, overrideSignalXlabel{1}, overrideSignalXlabel{2}, savePlots);
   end
 
   % Configuro el plot de la TFTD de señal.

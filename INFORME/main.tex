@@ -173,7 +173,124 @@ Entonces haciendo uso del algoritmo desarrollado previamente (ver \ref{tftd_func
 \image{senial_y_su_tftd}{Plot de la Se\~{n}al y el m\'odulo y fase de su TFTD.}
 \image{tftd_senial_freqs}{Se indica las frecuencias predominantes en la TFTD de la se\~nal.}
 
-\section{Sistemas de ecuaciones en diferencias}
+% EJERCICIO 1 INCISO 2
+\section{Sistemas dados}
+% Sistemas de ecuaciones.
+\subsection{Ecuaciones en diferencias}
+Las siguientes ecuaciones en diferencias dadas representan sistemas
+\begin{equation} \label{eq1}
+y[n] = \frac{1}{2}x[n] + \frac{1}{2}x[n-1]
+\end{equation}
+\begin{equation} \label{eq2}
+y[n] = \frac{1}{2}x[n] - \frac{1}{2}x[n-1]
+\end{equation}
+\begin{equation} \label{eq3}
+y[n] = \frac{1}{4}x[n] + \frac{1}{4}x[n-1] + \frac{1}{2}y[n-1]
+\end{equation}
+\begin{equation} \label{eq4}
+y[n] = \frac{1}{4}x[n] - \frac{1}{4}x[n-1] - \frac{1}{2}y[n-1]
+\end{equation}
+
+Las respuestas impulsionales de los sistemas \ref{eq1} y \ref{eq2} se obtienen anal\'iticamente cuando la entrada es $x[n] = \delta[n]$.
+% Respuestas impusionales de los sistemas 1 y 2.
+\begin{equation} \label{h1}
+h_1[n] = \frac{1}{2}\delta[n] + \frac{1}{2}\delta[n-1]
+\end{equation}
+\begin{equation} \label{h2}
+h_2[n] = \frac{1}{2}\delta[n] - \frac{1}{2}\delta[n-1]
+\end{equation}
+
+Y las respuestas en frecuencia de los mismos es:
+\begin{equation*}
+  H(e^{j2{\pi}s}) = \frac{TFTD\{y[n]\}}{TFTD\{x[n]\}} = \frac{X(e^{j2{\pi}s})}{Y(e^{j2{\pi}s})}
+\end{equation*}
+\begin{equation} \label{H1}
+  H_1(e^{j2{\pi}s}) = \frac{1}{2} + \frac{1}{2}e^{-j2{\pi}s}
+\end{equation}
+\begin{equation} \label{H2}
+  H_2(e^{j2{\pi}s}) = \frac{1}{2} - \frac{1}{2}e^{-j2{\pi}s}
+\end{equation}
+
+Para poder conseguir las respuestas impulsionales de los sistemas \ref{eq3} y \ref{eq4} cambia el procedimiento, porque hay una realimentaci\'on de la salida ($y[n]$), entonces se obtiene de la siguiente manera calculando la TFTD del sistema \ref{eq3}.
+% Despeje de H = Y/X
+\[ TFTD\{y[n] = \frac{1}{2}x[n] + \frac{1}{2}x[n-1] + \frac{1}{2}y[n-1]\} \]
+\begin{equation*}
+  Y(e^{j2{\pi}s}) = \frac{1}{4}X(e^{j2{\pi}s}) + \frac{1}{4}e^{-j2{\pi}s}X(e^{j2{\pi}s}) + \frac{1}{2}e^{-j2{\pi}s}Y(e^{j2{\pi}s})
+\end{equation*}
+\begin{equation*}
+  Y(e^{j2{\pi}s}) [ 1 - \frac{1}{2}e^{-j2{\pi}s}] = X(e^{j2{\pi}s}) [ \frac{1}{4} + \frac{1}{4}e^{-j2{\pi}s}]
+\end{equation*}
+\begin{equation} \label{H3}
+  H_3(e^{j2{\pi}s}) = \frac{Y(e^{j2{\pi}s})}{X(e^{j2{\pi}s})} = \frac{[ \frac{1}{4} + \frac{1}{4}e^{-j2{\pi}s}]}{[ 1 - \frac{1}{2}e^{-j2{\pi}s}]}
+\end{equation}
+
+Entonces a partir de la siguiente transformada
+\begin{equation*}
+  u[n]a^n \supset \frac{1}{1-ae^{-j2{\pi}s}} , |a|<1
+\end{equation*}
+
+y de la propiedad
+\begin{equation*}
+  x[n-n_o] \supset e^{-j2{\pi}sn_o}X(e^{-j2{\pi}s})
+\end{equation*}
+
+Se antitransforma la respuesta en frecuencia del sistema \ref{eq3} (ec. \ref{H3}) para obtener la respuesta impulsional del mismo (ec. \ref{h3})
+\begin{equation*}
+  H_3(e^{j2{\pi}s}) = \frac{1}{4}[\frac{1}{1 - \frac{1}{2}e^{-j2{\pi}s}} + \frac{e^{-j2{\pi}s}}{1 - \frac{1}{2}e^{-j2{\pi}s}}]
+\end{equation*}
+\begin{equation} \label{h3}
+  H_3(e^{j2{\pi}s}) \supset h_3[n] = \frac{1}{4} [ u[n](\frac{1}{2})^n + u[n-1](\frac{1}{2})^{n-1} ]
+\end{equation}
+
+Ahora se procede de la misma manera con el sistema \ref{eq4}, y as\'i se obtienen la respuesta en frecuencia (ec. \ref{H4}) y la respuesta impulsional (ec. \ref{h4}) del mismo.
+\begin{equation} \label{H4}
+  H_4(e^{j2{\pi}s}) = \frac{1}{4}[ \frac{1}{1+\frac{1}{2}e^{-j2{\pi}s}} - \frac{e^{-j2{\pi}s}}{1+\frac{1}{2}e^{-j2{\pi}s}} ]
+\end{equation}
+\begin{equation*}
+  H_4(e^{j2{\pi}s}) \supset h_4[n]
+\end{equation*}
+\begin{equation} \label{h4}
+  h_4[n] = \frac{1}{4} [ u[n](\frac{-1}{2})^n - u[n-1](\frac{-1}{2})^{n-1} ]
+\end{equation}
+
+\subsection{Conclusiones sobre sistemas}
+Observando las respuestas impulsionales podemos concluir que son del tipo FIR\footnote{Finite Impulse Response (Respuesta Impulsional Finita).}. \\
+Y analizando las respuestas en frecuencias, el sistema 1 (Fig. \ref{fig:resp_sist_1}) se comporta como un filtro pasa bajos, el sistema 2 (Fig. \ref{fig:resp_sist_2}) como uno pasa altos, el 3 (Fig. \ref{fig:resp_sist_3}) como un pasa bajos con un ancho de banda m\'as selectivo que el sistema 1, y por \'ultimo el sistema 4 (Fig. \ref{fig:resp_sist_4}) como un filtro pasa altos con una banda m\'as selectiva que el sistema 3.
+\image{resp_sist_1}{Respuesta impulsional y en frecuencia del sistema 1.}
+\image{resp_sist_2}{Respuesta impulsional y en frecuencia del sistema 2.}
+\image{resp_sist_3}{Respuesta impulsional y en frecuencia del sistema 3.}
+\image{resp_sist_4}{Respuesta impulsional y en frecuencia del sistema 4.}
+
+\section{C\'alculo num\'erico de las respuestas en impulsionales y en frecuencias de los sistemas}
+\subsection{Implementaci\'on de los sistemas en Octave}
+Para poder implementar cada sistema se codificaron funciones que describen a cada uno, luego se defini\'o una funci\'on an\'onima delta que representa una delta de kronocker ($\delta[n]$) y, por \'ultimo, un vector N que define el instante de la señal, de esta manera fue como se obtuvieron los siguientes gr\'aficos.
+
+\subsection{C\'odigo}
+\begin{lstlisting}[style=Matlab-editor]
+y1 = @(x, n) (.5)*x(n) + (.5)*x(n-1);
+y2 = @(x, n) (.5)*x(n) - (.5)*x(n-1);
+function [y] = Y3(x, n)
+  y(1) = 0; % Condicion inicial.
+  for (k = 2:length(n))
+    y(k) = (.25).*x(n(k)) + (.25).*x(n(k-1)) + (.5).*y(k-1);
+  end
+end
+y3 = @(x, n) Y3(x, n);
+function [y] = Y4(x, n)
+  y(1) = 0; % Condicion inicial.
+  for (k = 2:length(n))
+    y(k) = (.25).*x(n(k)) - (.25).*x(n(k-1)) - (.5).*y(k-1);
+  end
+end
+y4 = @(x, n) Y4(x, n);
+
+% Defino un impulso.
+delta = @(n) (n==0);
+
+N = [-50:50];
+
+\end{lstlisting}
+
 
 \begin{thebibliography}{99}
 
