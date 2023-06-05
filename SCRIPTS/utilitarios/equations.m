@@ -1,6 +1,6 @@
 % Defino las ecuaciones analíticas.
 
-consolelog('Defino Ecuaciones');
+consolelog('Defino las ecuaciones de los sistemas y sus respuestas analiticas.');
 
 % Sistema 1.
 function [y] = Y1(x, n)

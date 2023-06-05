@@ -15,15 +15,15 @@ addpath('SCRIPTS:SCRIPTS/utilitarios');
 addpath('./AnSyS2023_PU1_m');
 
 % Se definen variables globales.
-% packages();
 global_variables();
 equations();
-% delta_();
 
-% Se resuelve el ejercicio 1 inciso 1
+% Se resuelve el EJERCICIO 1.
+[nSignal, signal] = getSignal(); % Se obtiene la señal provista
 % ej1_inc1();
 %ej1_inc2();
-ej1_inc3();
+% ej1_inc3();
+ej1_inc4();
 
 % Esta línea es importante porque la uso para chequear en compile.sh si todo fue bien.
 q();

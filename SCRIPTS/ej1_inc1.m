@@ -4,16 +4,13 @@ consolelog("Se resuelve el ejercicio 1, inciso 1.");
 % haciendo la TFTD de pares conocidos de los cuales se el resultado
 % test_tftd(); % TODO
 
-% Se obtiene la señal
-[n, x] = getSignal();
-
 % Se grafica la señal
-graphSignal(n, x, "Senial", savePlots, getPlotPath("senial", GENERAL_GRAPH_PATHS));
+graphSignal(nSignal, signal, "Senial", savePlots, getPlotPath("senial", GENERAL_GRAPH_PATHS));
 
 % Se grafica la TFTD de la señal dada
 [sSenial, tftdSenial] = TFTD(n, x);
 plotSignalAndTFTD(
-  n, x, sSenial, tftdSenial,
+  nSignal, signal, sSenial, tftdSenial,
   'senial',
   getPlotPath("senial_y_su_tftd", GENERAL_GRAPH_PATHS),
   savePlots,

@@ -97,7 +97,7 @@ En el presente se desarrollan detalladamente los m\'etodos y t\'ecnicas empleada
 
 \section{Implementaci\'on de la \textbf{TFTD} en Octave}
 \subsection{Marco Te\'orico} \label{subsec:TFTD}
-La \textbf{transformada de Fourier de tiempo discreto} (\textbf{TFTD}) de una se\~{n}al dada se define como (Ref. \cite{tftd_tp5} y \cite{tftd_teoria})
+La \textbf{transformada de Fourier de tiempo discreto} (\textbf{TFTD}) de una se\~{n}al dada se define como (Ref. \cite{bib:tftd_tp5} y \cite{bib:tftd_teoria})
 \[
   TFTD\{x[n]\} = X(e^{j2{\pi}s}) = \sum_{-\infty}^{\infty}{x[n]e^{-j2{\pi}sn}}
 \]
@@ -253,7 +253,7 @@ Ahora se procede de la misma manera con el sistema \ref{eq4}, y as\'i se obtiene
   h_4[n] = \frac{1}{4} [ u[n](\frac{-1}{2})^n - u[n-1](\frac{-1}{2})^{n-1} ]
 \end{equation}
 
-\subsection{Conclusiones sobre sistemas}
+\subsection{Conclusiones sobre sistemas} \label{subsec:conclusiones-sistemas}
 Observando las respuestas impulsionales podemos concluir que son del tipo FIR\footnote{Finite Impulse Response (Respuesta Impulsional Finita).}. \\
 Y analizando las respuestas en frecuencias, el sistema 1 (Fig. \ref{fig:resp_sist_1}) se comporta como un filtro pasa bajos, el sistema 2 (Fig. \ref{fig:resp_sist_2}) como uno pasa altos, el 3 (Fig. \ref{fig:resp_sist_3}) como un pasa bajos con un ancho de banda m\'as selectivo que el sistema 1, y por \'ultimo el sistema 4 (Fig. \ref{fig:resp_sist_4}) como un filtro pasa altos con una banda m\'as selectiva que el sistema 3.
 \image{resp_sist_1}{Respuesta impulsional y en frecuencia del sistema 1.}
@@ -301,14 +301,20 @@ Observando los resultados que se pueden apreciar en los siguiente gr\'aficos (Fi
 \image{num_resp_sist_4}{Respuesta impulsional y en frecuencia del sistema 4 (num\'erica).}
 
 \section{Procesamiento de \textit{``senial''} con los sistemas}
-Se emplean los sistemas \ref{eq1}, \ref{eq2}, \ref{eq3} y \ref{eq4} como filtros para procesar la se\~nal dada \textit{``senial''}; para ello se usa como entrada a los mismos \textit{``senial''}.
-
+Se emplean los sistemas \ref{eq1}, \ref{eq2}, \ref{eq3} y \ref{eq4} como filtros para procesar la se\~nal dada \textit{``senial''}; para ello se usa como entrada a los mismos \textit{``senial''}; luego de esto se calculan las \textbf{TFTD} de las se\~nales filtradas. Los resultados obtenidos se pueden observar en los gr\'aficos \ref{fig:senial_filtrada_1}, \ref{fig:senial_filtrada_2}, \ref{fig:senial_filtrada_3} y \ref{fig:senial_filtrada_4}, donde \textit{``$senial_i$''} refiere a la señal  filtrada con el sistema \textit{``i''}.
+\image{senial_filtrada_1}{Senial filtrada con el sistema 1.}
+\image{senial_filtrada_2}{Senial filtrada con el sistema 2.}
+\image{senial_filtrada_3}{Senial filtrada con el sistema 3.}
+\image{senial_filtrada_4}{Senial filtrada con el sistema 4.}
+\subsection{Conclusiones de las se\~nales filtradas}
+A partir de los gr\'aficos \ref{fig:senial_filtrada_1}, \ref{fig:senial_filtrada_2}, \ref{fig:senial_filtrada_3} y \ref{fig:senial_filtrada_4} se puede concluir que las hip\'otesis planteadas en \ref{subsec:conclusiones-sistemas} son correctas, pues en los mismos se puede observar que las componentes de alta frecuencia son eliminadas con los sistemas \ref{eq1} y \ref{eq3} (Fig. \ref{fig:senial_filtrada_1} y \ref{fig:senial_filtrada_3} respectivamente), que se comportaban como \textbf{filtros pasa bajos}; y de manera similar las frecuencias bajas son eliminadas con los sistemas \ref{eq2} y \ref{eq4} (Fig. \ref{fig:senial_filtrada_2} y \ref{fig:senial_filtrada_4} respectivamente), que act\'uaban como \textbf{filtros pasa altos}
 
 \begin{thebibliography}{99}
 
-% TODO
-\bibitem{tftd_tp5}ANÁLISIS DE SISTEMAS Y SE\~{n}ALES - A\~{n}O 2022, Práctica 5 Transformada de Fourier de Tiempo Discreto (TFTD), Serie Discreta Fourier (SDF).
-\bibitem{tftd_teoria}ANÁLISIS DE SISTEMAS Y SE\~{n}ALES - A\~{n}O 2022, Filminas de teor\'ia 5: Transformada de Fourier de Tiempo Discreto (TFTD).
+  
+\bibitem{bib:oppenheim}A.V. Oppenheim, A.S. Willsky, Se\~nales y Sistemas.
+\bibitem{bib:tftd_tp5}ANÁLISIS DE SISTEMAS Y SE\~{n}ALES - A\~{n}O 2023, Práctica 5 Transformada de Fourier de Tiempo Discreto (TFTD), Serie Discreta Fourier (SDF).
+\bibitem{bib:tftd_teoria}ANÁLISIS DE SISTEMAS Y SE\~{n}ALES - A\~{n}O 2023, Transparencias de teor\'ia 5: Transformada de Fourier de Tiempo Discreto (TFTD).
 
 \end{thebibliography}
 
