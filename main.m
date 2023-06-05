@@ -21,6 +21,7 @@ global_variables();
 % equations();
 
 % Se resuelve el ejercicio 1 inciso 1
+consolelog("Se resuelve el ejercicio 1, inciso 1.");
 ej1_inc1();
 
 % Esta línea es importante porque la uso para chequear en compile.sh si todo fue bien.

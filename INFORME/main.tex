@@ -126,141 +126,54 @@ end
 \end{lstlisting}
 
 \subsection{Prueba del Algoritmo}
-Para poder hacer uso del algoritmo primero se realiz\'o el c\'alculo analítico de la TFTD de las siguientes se\~{n}ales
+Para poder hacer uso del algoritmo primero se realiz\'o el c\'alculo analítico de la \textbf{TFTD} de las siguientes se\~{n}ales a partir de propiedades y pares transformandos conocidos
 \[
   Delta = \delta[\textbf{n}-n_o] \supset e^{-j2{\pi}\textbf{s}n_o}
 \]
 \[
   Tri\acute{a}ngulo = \wedge[\frac{\textbf{n}-b}{a}] \supset |a|.e^{-j2{\pi}\textbf{s}\frac{a}{b}}.sinc^2(a\textbf{s})
 \]
-Y luego se emple\'o el siguiente c\'odigo para verificar que las aproximaciones sean lo ``suficientemente'' buenas
+Y luego se emple\'o el siguiente c\'odigo que calcula la \textbf{TFTD} de manera num\'erica con el algoritmo (ver \ref{tftd_function}) y la \textbf{TFTD} anal\'itica, para verificar que las aproximaciones sean lo ``suficientemente'' buenas
 
 \begin{lstlisting}[style=Matlab-editor]
 N = [1:100];
 
-% Triangulo desplazado 50 y de base 5.
-Senial1 = tri((N-length(N)/2)/5);
-[s1, tftd1] = TFTD(N, Senial1);
-
 % Delta desplazada 20.
-Senial2 = zeros(size(N));
-Senial2(20) = 1;
-[s2, tftd2] = TFTD(N, Senial2);
+Senial1 = zeros(size(N0));
+Senial1(20) = 1;
+[s1, tftd1] = TFTD(N0, Senial1);
+
+% Triangulo desplazado 50 y de base 5.
+Senial2 = tri((N0-length(N0)/2)/5);
+[s2, tftd2] = TFTD(N0, Senial2);
+
+% Transformada analitica senial1
+tftdAnaliticSenial1 = @(s) exp(-j*2*pi*20.*s);
+
+% Transformada analitica senial2
+tftdAnaliticSenial2 = @(s) 5.*exp(-2*pi*10.*s).*(sinc(5.*s).^2);
+
 \end{lstlisting}
 
-De lo cual se obtuvieron los siguientes resultados (Fig. \ref{fig:triangulo_tftd} y \ref{fig:delta_tftd}), que son acorde a los c\'alculos analíticos, por lo que se concluye que el algoritmo implementado es adecuado para \'esta aplicaci\'on.
+De lo cual se obtuvieron los siguientes resultados (Fig. \ref{fig:delta_tftd} y \ref{fig:triangulo_tftd}), que son acordes por la similitud a los c\'alculos analíticos (Fig. \ref{fig:delta_tftd_analitica} y \ref{fig:triangulo_tftd_analitica} respectivamente), por lo que se concluye que el algoritmo implementado es adecuado para \'esta aplicaci\'on.
 
 % Resultados gráficos
-\image{triangulo_tftd}{Se\~{n}al tri\'angulo y el m\'odulo y fase de su TFTD num\'erica.}
 \image{delta_tftd}{Se\~{n}al delta y el m\'odulo y fase de su TFTD num\'erica.}
+\image{triangulo_tftd}{Se\~{n}al tri\'angulo y el m\'odulo y fase de su TFTD num\'erica.}
 \image{delta_tftd_analitica}{Se\~{n}al delta y el m\'odulo y fase de su TFTD anal\'itica.}
 \image{triangulo_tftd_analitica}{Se\~{n}al tri\'angulo y el m\'odulo y fase de su TFTD anal\'itica.}
 
+
 \section{TFTD de la sen\~al provista}
-Entonces haciendo uso del algoritmo explicado previamente (ver \ref{tftd_function}) se aproxim\'o la TFTD de la se\~{n}al dada (ver \ref{fig:senial_y_su_tftd}), de lo cual se puede observar que la se\~{n}al est\'a compuesta por otras dos: una de baja frecuencia preponderante, y otra de baja que influye menos (ver Fig. \ref{fig:tftd_senial_freqs}).
+
+Se obtuvo la se\~nal dada a partir de los comandos provistos\footnote{use el comando 'help senial' para m\'as informaci\'on.}, y como se puede apreciar en el gr\'afico (fig. \ref{fig:senial}) la misma est\'a compuesta de sinusoides superpuestas de componentes de alta y baja frecuencia.
+\image{senial}{Se\~nal provista.}
+
+Entonces haciendo uso del algoritmo desarrollado previamente (ver \ref{tftd_function}) se aproxim\'o la TFTD de la se\~{n}al dada (ver \ref{fig:senial_y_su_tftd}), de lo cual se puede observar que efectivamente lo hipotetizado sobre la se\~{n}al es cierto, pues la misma est\'a compuesta por otras dos: una de baja frecuencia preponderante, y otra de alta que influye menos (ver Fig. \ref{fig:tftd_senial_freqs}).
 \image{senial_y_su_tftd}{Plot de la Se\~{n}al y el m\'odulo y fase de su TFTD.}
-% \image{tftd_senial_freqs}{Se indica las frecuencias predominantes en la TFTD de la se\~nal.}
+\image{tftd_senial_freqs}{Se indica las frecuencias predominantes en la TFTD de la se\~nal.}
 
-% Grafico de la frecuencia, a la que se le señala las altas y bajas frecuencias.
-% \begin{figure}[H]
-% \centering
-% \includegraphics[width=0.43\textwidth]{figures/senial_y_su_tftd_indicating.png}
-% \caption{}
-% \label{fig:tftd_senial_freqs}
-% \end{figure}
-% \subsection{Comandos para la obtenci\'on de la se\~{n}al y su TFTD}
-% \label{commands_tftf_signal}
-% \begin{lstlisting}[style=Matlab-editor]
-% [n, x] = senial(698544);
-% [s, tftd] = TFTD(n, x, 1e-4);
-% \end{lstlisting}
-
-
-% \section{Implementaci\'on de TFTD en Octave}
-% Se cre\'o un \textit{script}\footnote{El \textit{script} se puede encontrar como \textit{'TFTD.m'}} el cual calcula la TFTD\footnote{Transformada de Fourier de tiempo discreto} de una se\~nal. Para corroborar que funciona correctamente se calcularon las TFTD de los siguientes pares conocidos.
-% \[
-%   TFTD\{x[n]\} = X(e^{j2{\pi}s}) = \sum_{n=-\infty}^{\infty}{x[n]e^{-j2{\pi}sn}}
-% \]
-%
-% \image{senial}{Se\~nal provista.}
-%
-% \section{Procesamiento de la se\~nal dada}
-% Se obtuvo la se\~nal dada a partir de los comandos provistos\footnote{use el comando 'help senial' para m\'as informaci\'on.}, y como se puede apreciar en el gr\'afico (fig. \ref{fig:senial}) posee componentes de alta y baja frecuencia.
-% \image{senial}{Se\~nal provista.}
-
-% \subsection{}
-
-% \subsection{}
-% Analizando el diagrama en bloques provisto se obtiene la siguiente ecuaci\'on que describe su comportamiento.
-% \begin{equation} \label{eq:y}
-%   y[n] = \frac{1}{2}x[n] + \frac{1}{2}x[n-1] + R^{L}y[n-L]
-% \end{equation}
-% Se obtiene la transferencia del sistema transformando ec. \ref{eq:y} con la transformanda $Z$.
-% \begin{equation} \label{eq:Hz}
-%   H(z) = \frac{Y(z)}{X(z)} = (\frac{1}{2})\frac{1 + z^{-1}}{1 - R^{L}z^{-L}}
-% \end{equation}
-%
-% \subsection{Obtenci\'on de la ecuaci\'on del sistema}
-% Analizando el diagrama en bloques provisto se obtiene la siguiente ecuaci\'on que describe su comportamiento.
-% \begin{equation} \label{eq:y}
-%   y[n] = \frac{1}{2}x[n] + \frac{1}{2}x[n-1] + R^{L}y[n-L]
-% \end{equation}
-% Se obtiene la transferencia del sistema transformando ec. \ref{eq:y} con la transformanda $Z$.
-% \begin{equation} \label{eq:Hz}
-%   H(z) = \frac{Y(z)}{X(z)} = (\frac{1}{2})\frac{1 + z^{-1}}{1 - R^{L}z^{-L}}
-% \end{equation}
-%
-% Mediante la funci\'on de transferencia se obtiene la respuesta en frecuencia (fig. \ref{fig:HfreqResp}) del sistema de la siguiente manera
-% \begin{equation*}
-%   H(e^{j2{\pi}s}) = (\frac{1}{2})\frac{1 + {e^{-j2{\pi}s}}}{1 - R^{L}{e^{-j2{\pi}sL}}}
-% \end{equation*}
-% % TODO hacer una animación para diferentes valores de L y R
-% \image{HfreqResp}{Respuesta en frecuencia del sistema (ec. \ref{eq:y})}
-%
-% \subsection{Polos y ceros de H(z)}
-% Se grafican los polos y los ceros de la funci\'on de transferencia (ec. \ref{eq:Hz}) con el siguiente c\'odigo
-% % Codigo
-% % TODO: actualizar esto con el correspondiente codigo
-% \begin{lstlisting}[style=Matlab-editor]
-% % tf y pzmap son del paquete de control
-% pkg load control;
-% % Se define el tipo de z
-% z = tf('z', Ts);
-% % Se define la funcion de transferencia H(z) como H
-% H = @(r, l) (1/2)*( (1+z^(-1)) / (1-(r^l)*(z^(-l))) );
-% % Se define una secuencia aleatoria uniforme de longitud 100
-% x = rand(100);
-% L = length(x);
-% R = .1;
-% % Se grafican los zeros y polos de H
-% pzmap(H(R, L));
-% \end{lstlisting}
-%
-% \image{Hz-pzmap-1}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=10}
-% \image{Hz-pzmap-2}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=5}
-% \image{Hz-pzmap-3}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=1}
-% \image{Hz-pzmap-4}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=0,5}
-% \image{Hz-pzmap-5}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=0,1}
-% \image{Hz-pzmap-6}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=0,01}
-%
-% Haciendo un an\'alisis de la ec. \ref{eq:Hz} podemos observar que el numerador tiende a cero cuando $z$ tiende a $-1$, y el denominador cuando $z$ tiende a $R$; por lo que los polos se encuentran en la circunferencia de radio $R$ y son L (en cantidad), adem\'as tiene un cero en $z=-1$, que es acorde con lo que se ver en los gr\'aficos anteriores.
-%
-% \subsection{Estabilidad del sistema}
-% Para que el sistema sea estable y causal todos los polos se deben encontrar dentro de la circunferencia de radio unitario. Por lo que para valores de $0<R<1$ el sistema es estable.
-%
-% \section{Inciso 2}
-% \subsection{Filtro de pasatodo}
-% Obtengo la ecuación (\ref{eq:yfiltro}) que describe el sistema a partir de los diagramas en bloques dados.
-% \begin{equation} \label{eq:yfiltro}
-%   y[n] = a.x[n] + x[n-1] - a.y[n-1]
-% \end{equation}
-% Calculo la función de transferencia a partir de la ecuación \ref{eq:yfiltro}.
-% \begin{equation} \label{eq:Hfiltro}
-%   H(z) = \frac{a + z^{-1}}{1+a.z^{-1}}
-% \end{equation}
-% \subsection{Fase del filtro}
-% En el siguiente se muestran diferentes fases de la respuesta en frecuencia del filtro (ec \ref{eq:yfiltro}).
-% \image{HPhiA}{Diferentes fases de la respuesta en frecuencia del filtro (ec. \ref{eq:yfiltro}).}
+\section{Sistemas de ecuaciones en diferencias}
 
 \begin{thebibliography}{99}
 

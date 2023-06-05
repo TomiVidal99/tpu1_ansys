@@ -1,8 +1,15 @@
-function graphSignal(n, x, signalName = "Señal", savePlots, savePicPath = NaN, figureNumber = '')
+function graphSignal(
+  n, x,
+  signalName = "Señal",
+  savePlots, savePicPath = NaN,
+  figureNumber = '',
+  customLimits = {},
+  customSteps = {},
+  beforeSaveCallback="")
   % Se grafica una señal con vector de pasos 'n' y amplitud 'x'
   % el grafico se prepara para ser guardado
 
-  consolelog(cstrcat("Creando gráfico de '", signalName, "' \n"));
+  dispc(cstrcat("Creando gráfico de '", strrep(signalName, "\\", "\\\\"), "' \n"), "blue");
 
   % Creo una nueva ventana independiente.
   if (isinteger(figureNumber) == 0 && isfloat(figureNumber) == 0)
@@ -25,8 +32,31 @@ function graphSignal(n, x, signalName = "Señal", savePlots, savePicPath = NaN, 
   grid on;
   set(gca, "linewidth", plotLinewidth, "fontsize", plotFontSize);
 
+  % Agrego limites personalizados
+  if (length(customLimits) == 1)
+    xlim(customLimits{1});
+  elseif (length(customLimits) == 2)
+    xlim(customLimits{1});
+    ylim(customLimits{2});
+  end
+
+  % Agrego paso con el que se recorren los ejes personalizados
+  if (length(customSteps) == 1)
+    limits = axis();
+    set(gca, 'xtick', limits(1):customSteps{1}:limits(2));
+  elseif (length(customSteps) == 2)
+    limits = axis();
+    set(gca, 'xtick', limits(1):customSteps{1}:limits(2));
+    set(gca, 'ytick', limits(3):customSteps{2}:limits(4));
+  end
+
   % Le pongo titulo
   title(signalName);
+
+  % callback para aplicar cambios particulares al plot antes de guardar
+  if (strcmp(typeinfo(beforeSaveCallback), "null_string") == 0)
+    beforeSaveCallback();
+  end
 
   % Guardo el plot en una imagen png.
   if (savePlots == 1 && savePicPath != NaN)
