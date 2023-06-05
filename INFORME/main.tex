@@ -309,8 +309,17 @@ Se emplean los sistemas \ref{eq1}, \ref{eq2}, \ref{eq3} y \ref{eq4} como filtros
 \subsection{Conclusiones de las se\~nales filtradas}
 A partir de los gr\'aficos \ref{fig:senial_filtrada_1}, \ref{fig:senial_filtrada_2}, \ref{fig:senial_filtrada_3} y \ref{fig:senial_filtrada_4} se puede concluir que las hip\'otesis planteadas en \ref{subsec:conclusiones-sistemas} son correctas, pues en los mismos se puede observar que las componentes de alta frecuencia son eliminadas con los sistemas \ref{eq1} y \ref{eq3} (Fig. \ref{fig:senial_filtrada_1} y \ref{fig:senial_filtrada_3} respectivamente), que se comportaban como \textbf{filtros pasa bajos}; y de manera similar las frecuencias bajas son eliminadas con los sistemas \ref{eq2} y \ref{eq4} (Fig. \ref{fig:senial_filtrada_2} y \ref{fig:senial_filtrada_4} respectivamente), que act\'uaban como \textbf{filtros pasa altos}
 
-\begin{thebibliography}{99}
+\section{Procesamiento de la se\~nal provista \textit{``hcanald''}}
+La se\~nal provista \textit{``hcanald''} se compone de tres deltas de Kronocker de diferentes amplitudes, una ubicada en 0, otra en 8820 y la tercera en 17640. Por lo que la respuesta impulsional puede ser descripta anal\'iticamente como:
+\begin{equation} \label{eq:hcanald}
+  h[n] = \delta[n] + (\frac{2}{5})\delta[n-8820] + (\frac{4}{25})\delta[n-17640]
+\end{equation}
+\image{hcanald}{Se\~nal \textit{``hcanald''}.}
+\image{hcanald_analitica}{Se\~nal \ref{eq:hcanald}.}
 
+Y como se puede observar en los gr\'aficos (Fig. \ref{fig:hcanald} y Fig. \ref{fig:hcanald_analitica}), la ecuaci\'on \ref{eq:hcanald} es correcta.
+
+\begin{thebibliography}{99}
   
 \bibitem{bib:oppenheim}A.V. Oppenheim, A.S. Willsky, Se\~nales y Sistemas.
 \bibitem{bib:tftd_tp5}ANÁLISIS DE SISTEMAS Y SE\~{n}ALES - A\~{n}O 2023, Práctica 5 Transformada de Fourier de Tiempo Discreto (TFTD), Serie Discreta Fourier (SDF).

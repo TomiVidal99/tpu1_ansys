@@ -5,7 +5,9 @@ function graphSignal(
   figureNumber = '',
   customLimits = {},
   customSteps = {},
-  beforeSaveCallback="")
+  beforeSaveCallback="",
+  useStem = 0
+  )
   % Se grafica una señal con vector de pasos 'n' y amplitud 'x'
   % el grafico se prepara para ser guardado
 
@@ -28,7 +30,11 @@ function graphSignal(
   end
   colorMap = rand(length(n), 3);
   hold on;
-  plot(n, x, "linewidth", plotLinewidth);
+  if (useStem == 1)
+    stem(n, x, "linewidth", plotLinewidth, "filled");
+  else
+    plot(n, x, "linewidth", plotLinewidth);
+  end
   grid on;
   set(gca, "linewidth", plotLinewidth, "fontsize", plotFontSize);
 
