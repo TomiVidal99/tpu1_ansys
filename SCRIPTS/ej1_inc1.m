@@ -2,13 +2,13 @@ consolelog("Se resuelve el ejercicio 1, inciso 1.");
 
 % Corroboro que el algoritmo de TFTD que implemente es correcto
 % haciendo la TFTD de pares conocidos de los cuales se el resultado
-% test_tftd(); % TODO
+test_tftd(); % TODO
 
 % Se grafica la señal
 graphSignal(nSignal, signal, "Senial", savePlots, getPlotPath("senial", GENERAL_GRAPH_PATHS));
 
 % Se grafica la TFTD de la señal dada
-[sSenial, tftdSenial] = TFTD(n, x);
+[sSenial, tftdSenial] = TFTD(nSignal, signal);
 plotSignalAndTFTD(
   nSignal, signal, sSenial, tftdSenial,
   'senial',
