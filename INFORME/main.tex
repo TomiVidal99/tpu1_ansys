@@ -91,9 +91,7 @@
 \pagestyle{empty}
 
 \section{INTRODUCCCI\'ON}
-% TODO
-En el presente se desarrollan detalladamente los m\'etodos y t\'ecnicas empleadas para la resoluci\'on de sistemas discretos, en particular de tipo lineal e invariante al desplazamiento (o en el tiempo), haciendo uso de la herramienta \href{https://octave.org/}{Octave}. \'Estos sistemas est\'an descriptos en ecuaciones en diferencias\footnote{ver ASyS2023\_PU1-1.pdf.}.
-% Se resulve el trabajo pr\'actico dado a partir de los conocimientos y algoritmos aprendidos en las clases de Análisis de Sistemas y Se\~{n}ales. Para lo cual se cre\'o un script (main.m) que ejecuta todos los comandos y alogritmos pertinentes para generar los datos y gr\'aficos que se muestran posteriormente. Adem\'as todo el trabajo se encuentra hosteado en un \href{https://github.com/TomiVidal99/tpu1_ansys}{repositorio}\footnote{El repositorio se encuentra privado, para acceder hay que enviar un email a \href{mailto:vidal.tomas@alu.ing.unlp.edu.ar}{vidal.tomas@alu.ing.unlp.edu.ar}} de Github\footnote{Servicio basado en la nube que ayuda a desarrolladores a guardar y gestinonar c\'odigo.} por si el lector quiere indagar profundamente en el c\'odigo y en los algoritmos.
+En el presente se desarrollan detalladamente los \textbf{m\'etodos} y \textbf{t\'ecnicas} empleadas para la resoluci\'on de \textbf{sistemas discretos}, en particular de tipo lineal e invariante al desplazamiento (o en el tiempo), haciendo uso de la herramienta \href{https://octave.org/}{Octave}\footnote{Octave o GNU Octave es un programa y lenguaje de programaci\'on para realizar c\'alculos num\'ericos. Como su nombre indica, Octave es parte del proyecto GNU. Es considerado el equivalente libre de MATLAB}. \'Estos sistemas est\'an descriptos en ecuaciones en diferencias\footnote{ver ASyS2023\_PU1-1.pdf.}, y son implementados con algoritmos en \textbf{scripts}\footnote{En inform\'atica, un script, refiere a un archivo que contiene una secuencia de comandos de un lenguaje de programaci\'on}. Adem\'as se analiza y soluciona los problemas presentes en un cable digital cuya respuesta impulsional es un dato experimental, para poder enviar por el mismo una se\~nal sin que sea distorsionada.
 
 \section{Implementaci\'on de la \textbf{TFTD} en Octave}
 \subsection{Marco Te\'orico} \label{subsec:TFTD}
@@ -319,8 +317,63 @@ La se\~nal provista \textit{``hcanald''} se compone de tres deltas de Kronocker 
 
 Y como se puede observar en los gr\'aficos (Fig. \ref{fig:hcanald} y Fig. \ref{fig:hcanald_analitica}), la ecuaci\'on \ref{eq:hcanald} es correcta.
 
-\section{Salido del canal a la señal provista de audio}
+\subsection{Salida del canal digital}
+A partir de la ecuaci\'on \ref{eq:hcanald} implementada como un sistema en Octave (ver \ref{code:ecdiff}) y de la se\~nal de audio provista, se obtuvo la salida de los que simula ser un canal digital (Fig. \ref{fig:salidaCanalDigital}). 
+\image{salidaCanalDigital}{Audio provisto como entrada y salida al canal digital.}
 
+\subsection{Implementaci\'on del canal digital en Octave}
+\label{code:ecdiff}
+\begin{lstlisting}[style=Matlab-editor]
+function y = ecDiff(x)
+  % El algoritmo solo acepta que x sea vector.
+  if (
+      strcmp(typeinfo(x), 'bool matrix') == 0 &&
+      strcmp(typeinfo(x), 'matrix') == 0
+  )
+    dispc('ERROR: x debe ser vector.\n', 'red');
+    exit(1);
+  end
+
+  %{
+    La ecuacion a resolver es:
+    y[n] = x[n] + a.x[n-n0] + b.x[n-n1]
+  %}
+
+  % Constantes.
+  n0 = 8820;
+  n1 = 2*n0;
+  a = (2/5);
+  b = a^2;
+  
+  % Algoritmo.
+  for (k = 1:length(x))
+    term1=0;term2=0;
+    if (k-n0 > 0)
+      term1 = a*x(k-n0);
+    end
+    if (k-n1 > 0)
+      term2 = b*x(k-n1);
+    end
+    y(k) = x(k) + term1 + term2;
+  end
+
+end
+\end{lstlisting}
+
+\subsection{Conclusiones sobre el canal digital}
+De los resultados previos (Fig. \ref{fig:salidaCanalDigital}) el lector puede inferir correctamente (de manera visual y auditiva), que el canal digital distorsiona la se\~nal de entrada creando dos r\'eplicas: \textit{una de una amplitud muy significativa y otra de menos}; y \'estas son debidas a las deltas descriptas anteriormente (ver ec. \ref{eq:hcanald}). Para poder solucionar \'estos efectos indeseados se procede aplicando un filtro del tipo FIR, que busca asemejar la respuesta impulsional del canal a una \'unica delta de Kronecker ($h[n]=\delta[n]$), pues de \'esta manera las r\'eplicas no aparecen, ya que las deltas $(\frac{2}{5})\delta[n-8820]$ y $(\frac{4}{25})\delta[n-17640]$ son la causa de las mismas. \\
+Se comienza implementando un filtro ``$f1$'' en cascada a al salida del canal digital, cuya respuesta impulsional es $h_{f1}[n]=\delta[n]-\alpha.\delta[n-n_0]$, con $n_0=8820$ y $\alpha=\frac{2}{5}$, el resultado de \'este filtro se puede ver en la figura \ref{fig:y-filtro1}.
+\image{h-filtro1}{Respuesta impulsional del filtro 1.}
+\image{y-filtro1}{Salida del filtro 1.}
+
+Por lo explicado previamente la salida del filtro ``$f1$'' todav\'ia posee un poco de distorsi\'on, lo cual se puede solucionar implementando un filtro ``$f2$'' que posee dos ramas de retardo: $h_{f2}[n] = \delta[n] - \alpha\delta[n-n_0] - \alpha^2\delta[n-2n_0]$ 
+\image{h-filtro2}{Respuesta impulsional del filtro 2.}
+\image{y-filtro2}{Salida del filtro 2.}
+
+El lector puede corroborar auditivamente u observando detenidamente los gr\'aficos generados por los \textit{``scripts''} provistos que, la salida del filtro 2, es igual a la se\~nal original antes de introducirla en el canal digital; por lo que se concluye que se pudo solucionar satisfactoriamente las distorsiones que produce el cable.
+
+\section{Aclaraciones sobre datos ajenos al presente}
+Todos los archivos y datos a los que refieren en el presente se pueden encontrar en las carpetas adjuntas al mismo; algunas de \'estas carpetas se generar\'an despu\'es de ejecutar \textit{``main.m''} con Octave (no se recomienda usar Matlab\footnote{MATLAB (abreviatura de MATrix LABoratory, ``laboratorio de matrices'') es un sistema de c\'omputo num\'erico que ofrece un entorno de desarrollo integrado (IDE) con un lenguaje de programaci\'on propio (lenguaje M).}, pues no ha sido dise\~nado para \'este).
 
 \begin{thebibliography}{99}
   

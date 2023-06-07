@@ -1,12 +1,12 @@
 function y = ecDiff(x)
   % Creo una función que implementa el sistema encontrado en el ejercicio 2, inciso 2.
 
-  % El algoritmo sólo acepta que n y x sean vectores.
+  % El algoritmo sólo acepta que x sea vector.
   if (
       strcmp(typeinfo(x), 'bool matrix') == 0 &&
       strcmp(typeinfo(x), 'matrix') == 0
   )
-    dispc('ERROR: x y n deben ser vectores.\n', 'red');
+    dispc('ERROR: x debe ser vector.\n', 'red');
     exit(1);
   end
 

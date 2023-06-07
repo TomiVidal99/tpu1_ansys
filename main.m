@@ -30,6 +30,7 @@ equations();
 % [nCanal, hCanal] = getHCanald();
 % ej2_inc1();
 ej2_inc3();
+ej2_inc4(); % la ejecucion de este script requiere de ej2_inc3
 
 % Esta línea es importante porque la uso para chequear en compile.sh si todo fue bien.
 q();
