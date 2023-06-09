@@ -63,6 +63,10 @@ function dispc(varargin)
 
   coloredString = strcat(COLORS.(color), string);
 
-  printf([char(27), coloredString, char(27), '[0m']);
+  if (isWindows() == 1)
+    printf(string);
+  else
+    printf([char(27), coloredString, char(27), '[0m']);
+  end
 
 end

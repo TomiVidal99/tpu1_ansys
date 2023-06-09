@@ -4,7 +4,7 @@ function [figureNumber] = twoSubplots(
   savePlots = 0, savePath = '',
   xlimits = {},
   ylimits = {},
-  beforeSaveCallback = {}
+  beforeSaveCallback = ""
   )
   %{
     Función utilitaria que grafica en una misma ventana
@@ -66,7 +66,7 @@ function [figureNumber] = twoSubplots(
   setUpPlot(s2);
 
   % Callback despues de graficar
-  if (strcmp(typeinfo(beforeSaveCallback), "null_string") == 0 || strcmp(typeinfo(beforeSaveCallback), "string") == 0)
+  if (strcmp(typeinfo(beforeSaveCallback), "null_string") == 0 && strcmp(typeinfo(beforeSaveCallback), "string") == 0)
     beforeSaveCallback();
   end
 
