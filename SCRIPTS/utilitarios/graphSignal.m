@@ -17,7 +17,7 @@ function graphSignal(
   if (isinteger(figureNumber) == 0 && isfloat(figureNumber) == 0)
     fig = figure('name', signalName);
   else
-    figure(figureNumber, 'name', signalName);
+    fig = figure(figureNumber, 'name', signalName);
   end
 
   % Se grafica la señal
@@ -60,7 +60,7 @@ function graphSignal(
   title(signalName);
 
   % callback para aplicar cambios particulares al plot antes de guardar
-  if (strcmp(typeinfo(beforeSaveCallback), "null_string") == 0)
+  if (strcmp(typeinfo(beforeSaveCallback), "null_string") == 0 || strcmp(typeinfo(beforeSaveCallback), "string") == 0)
     beforeSaveCallback();
   end
 

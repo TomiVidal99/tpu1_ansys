@@ -1,4 +1,11 @@
-function [figureNumber] = twoSubplots(windowTitle, s1, s2, savePlots = 0, savePath = '', xlimits = 'auto', ylimits = 'auto')
+function [figureNumber] = twoSubplots(
+  windowTitle,
+  s1, s2,
+  savePlots = 0, savePath = '',
+  xlimits = {},
+  ylimits = {},
+  beforeSaveCallback = {}
+  )
   %{
     Función utilitaria que grafica en una misma ventana
     dos plots.
@@ -14,11 +21,11 @@ function [figureNumber] = twoSubplots(windowTitle, s1, s2, savePlots = 0, savePa
   function setUpPlot(st)
     title(st{3});
     grid on;
-    if (strcmp(xlimits, 'auto') != 1)
-      xlim([-xlimts, xlimts]); %set(gca,'XTick',-xlimts:.25:xlimts);
+    if (length(xlimits) == 1)
+      xlim(xlimits{1}); %set(gca,'XTick',-xlimits:.25:xlimits);
     end
-    if (strcmp(ylimits, 'auto') != 1)
-      ylim([-ylimits, ylimits]); %set(gca,'YTick',-ylimits:.25:ylimits);
+    if (length(ylimits) == 1)
+      ylim(ylimits{1}); %set(gca,'YTick',-ylimits:.25:ylimits);
     end
 
     % Leyenda de los ejes
@@ -57,6 +64,11 @@ function [figureNumber] = twoSubplots(windowTitle, s1, s2, savePlots = 0, savePa
     plot(s2{1}, s2{2}(s2{2}), 'b', 'linewidth', 3);
   end
   setUpPlot(s2);
+
+  % Callback despues de graficar
+  if (strcmp(typeinfo(beforeSaveCallback), "null_string") == 0 || strcmp(typeinfo(beforeSaveCallback), "string") == 0)
+    beforeSaveCallback();
+  end
 
   % Se guarda el gráfico.
   if (savePlots == 1)

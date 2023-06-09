@@ -110,6 +110,7 @@ Aproximar desde $n=-K$ hasta $n=K$ es lo mismo que multiplicar toda la se\~nal p
 
 \subsection{Algoritmo en Octave}
 \label{tftd_function}
+\nopagebreak
 \begin{lstlisting}[style=Matlab-editor] 
 function [s, tftd] = TFTD(
   n, signal,
@@ -153,7 +154,7 @@ tftdAnaliticSenial2 = @(s) 5.*exp(-2*pi*10.*s).*(sinc(5.*s).^2);
 
 \end{lstlisting}
 
-De lo cual se obtuvieron los siguientes resultados (Fig. \ref{fig:delta_tftd} y \ref{fig:triangulo_tftd}), que son acordes por la similitud a los c\'alculos analíticos (Fig. \ref{fig:delta_tftd_analitica} y \ref{fig:triangulo_tftd_analitica} respectivamente), por lo que se concluye que el algoritmo implementado es adecuado para \'esta aplicaci\'on.
+De lo cual se obtuvieron los siguientes resultados (Fig. \ref{fig:delta_tftd} y \ref{fig:triangulo_tftd}), que son acordes por la similitud a los c\'alculos analíticos (Fig. \ref{fig:delta_tftd_analitica} y \ref{fig:triangulo_tftd_analitica} respectivamente), por lo que se concluye que el algoritmo implementado es adecuado para \'esta aplicaci\'on. Cabe aclarar que si bien hay variaciones en las fases, \'estas son muy suceptibles a cambios en las aproximaciones y, adem\'as no son de nuestro inter\'es principal, ya que queremos analizar los m\'odulos de las \textbf{TFTD}.
 
 % Resultados gráficos
 \image{delta_tftd}{Se\~{n}al delta y el m\'odulo y fase de su TFTD num\'erica.}
@@ -292,7 +293,7 @@ N = [-20:20];
 \end{lstlisting}
 
 \subsection{Conclusiones sobre los resultados num\'ericos}
-Observando los resultados que se pueden apreciar en los siguiente gr\'aficos (Fig. \ref{fig:num_resp_sist_1}, \ref{fig:num_resp_sist_2}, \ref{fig:num_resp_sist_3} y \ref{fig:num_resp_sist_4}) se concluye que \textit{las implementaci\'ones num\'ericas son tan buenas como las anal\'iticas} y, adem\'as, indican que los c\'alculos anal\'iticos son correctos. Cabe aclarar que si bien hay variaciones en las fases, \'estas son muy suceptibles a cambios en las aproximaciones y, adem\'as no son de nuestro inter\'es principal, ya que queremos analizar los m\'odulos de las \textbf{TFTD}.
+Observando los resultados que se pueden apreciar en los siguiente gr\'aficos (Fig. \ref{fig:num_resp_sist_1}, \ref{fig:num_resp_sist_2}, \ref{fig:num_resp_sist_3} y \ref{fig:num_resp_sist_4}) se concluye que \textit{las implementaci\'ones num\'ericas son tan buenas como las anal\'iticas} y, adem\'as, indican que los c\'alculos anal\'iticos son correctos.
 \image{num_resp_sist_1}{Respuesta impulsional y en frecuencia del sistema 1 (num\'erica).}
 \image{num_resp_sist_2}{Respuesta impulsional y en frecuencia del sistema 2 (num\'erica).}
 \image{num_resp_sist_3}{Respuesta impulsional y en frecuencia del sistema 3 (num\'erica).}
@@ -373,7 +374,7 @@ Por lo explicado previamente la salida del filtro ``$f1$'' todav\'ia posee un po
 El lector puede corroborar auditivamente u observando detenidamente los gr\'aficos generados por los \textit{``scripts''} provistos que, la salida del filtro 2, es igual a la se\~nal original antes de introducirla en el canal digital; por lo que se concluye que se pudo solucionar satisfactoriamente las distorsiones que produce el cable.
 
 \section{Aclaraciones sobre datos ajenos al presente}
-Todos los archivos y datos a los que refieren en el presente se pueden encontrar en las carpetas adjuntas al mismo; algunas de \'estas carpetas se generar\'an despu\'es de ejecutar \textit{``main.m''} con Octave (no se recomienda usar Matlab\footnote{MATLAB (abreviatura de MATrix LABoratory, ``laboratorio de matrices'') es un sistema de c\'omputo num\'erico que ofrece un entorno de desarrollo integrado (IDE) con un lenguaje de programaci\'on propio (lenguaje M).}, pues no ha sido dise\~nado para \'este).
+Todos los archivos y datos a los que refieren en el presente se pueden encontrar en las carpetas adjuntas al mismo; algunas de \'estas carpetas se generar\'an despu\'es de ejecutar \textit{``main.m''} con \textbf{Octave} (\textit{no se recomienda usar Matlab\footnote{MATLAB (abreviatura de MATrix LABoratory, ``laboratorio de matrices'') es un sistema de c\'omputo num\'erico que ofrece un entorno de desarrollo integrado (IDE) con un lenguaje de programaci\'on propio (lenguaje M).}, pues no ha sido dise\~nado para \'este}).
 
 \begin{thebibliography}{99}
   

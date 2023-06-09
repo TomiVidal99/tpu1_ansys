@@ -23,6 +23,12 @@ audiowrite(
   fs
 );
 
+% Se grafica la TFTD y se señalan las componentes de alta y baja frecuencia
+function indicateEcosInSignal()
+  annotation("rectangle", [0.625 0.21 0.025 0.1], "color", "red", "linewidth", 1, "linestyle", "-.");
+  text(35000, 0.55, "Eco", "color", "red", "fontsize", 12, "fontweight", "bold");
+end
+
 % Se grafican la salida de y de despues de ser procesada con el filtro 1.
 s1 = {NH, audioSignal, 'Señal original'};
 s2 = {NH, yFiltro1, 'Señal filtrada por F1'};
@@ -31,8 +37,9 @@ twoSubplots(
   s1, s2,
   savePlots,
   createFilepath(GENERAL_GRAPH_PATHS, 'y-filtro1'),
-  'auto',
-  1.25
+  {[0, length(NH)]},
+  {[-0.75, 0.75]},
+  @indicateEcosInSignal
 );
 
 % FILTRO 2
@@ -71,6 +78,6 @@ twoSubplots(
   s1, s2,
   savePlots,
   createFilepath(GENERAL_GRAPH_PATHS, 'y-filtro2'),
-  'auto',
-  1.25
+  {[0, length(NH)]},
+  {[-0.75, 0.75]}
 );

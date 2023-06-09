@@ -19,18 +19,17 @@ global_variables();
 equations();
 
 % Se resuelve el EJERCICIO 1.
-% TODO
 [nSignal, signal] = getSignal(); % Se obtiene la señal provista
-% ej1_inc1();
-%ej1_inc2();
-% ej1_inc3();
+ej1_inc1();
+ej1_inc2();
+ej1_inc3();
 ej1_inc4();
 
 % Se resuelve el EJERCICIO 2.
-% [nCanal, hCanal] = getHCanald();
-% ej2_inc1();
-% ej2_inc3();
-% ej2_inc4(); % la ejecucion de este script requiere de ej2_inc3
+[nCanal, hCanal] = getHCanald();
+ej2_inc1();
+ej2_inc3();
+ej2_inc4(); % la ejecucion de este script requiere de ej2_inc3
 
 % Esta línea es importante porque la uso para chequear en compile.sh si todo fue bien.
 q();
