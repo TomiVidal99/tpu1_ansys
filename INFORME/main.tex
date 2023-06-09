@@ -53,14 +53,15 @@
 \usepackage{amsmath} % assumes amsmath package installed
 %\usepackage{amssymb}  % assumes amsmath package installed
 
-\title{\LARGE \bf Pr\'actico con Utilitario N° 2 (Opción E)}
+\title{\LARGE \bf Pr\'actica con Utilitario N° 1}
 
 \author{
   Tom\'as Vidal\\
   {\it An\'alisis de Sistemas y Se\~{n}ales}\\
   {\it Facultad de Ingenier\'ia, UNLP, La Plata, Argentina.}\\
-  {\it 8 de Julio, 2022.}
-}                                            % <-this % stops a space
+  {\it 21 de Mayo, 2023.}
+}
+% <-this % stops a space
 
 
 % comienzo
@@ -90,78 +91,296 @@
 \pagestyle{empty}
 
 \section{INTRODUCCCI\'ON}
-Se resulve el trabajo pr\'actico dado a partir de los conocimientos y algoritmos aprendidos en las clases de Análisis de Sistemas y Se\~{n}ales. Para lo cual se cre\'o un script (main.m) que ejecuta todos los comandos y alogritmos pertinentes para generar los datos y gr\'aficos que se muestran posteriormente. Adem\'as todo el trabajo se encuentra hosteado en un \href{https://github.com/TomiVidal99/asys_tpn2}{repositorio}\footnote{El repositorio se encuentra privado, para acceder hay que enviar un email a \href{mailto:vidal.tomas@alu.ing.unlp.edu.ar}{vidal.tomas@alu.ing.unlp.edu.ar}} de Github\footnote{Servicio basado en la nube que ayuda a desarrolladores a guardar y gestinonar c\'odigo.} por si el lector quiere indagar profundamente en el c\'odigo y en los algoritmos.
+En el presente se desarrollan detalladamente los \textbf{m\'etodos} y \textbf{t\'ecnicas} empleadas para la resoluci\'on de \textbf{sistemas discretos}, en particular de tipo lineal e invariante al desplazamiento (o en el tiempo), haciendo uso de la herramienta \href{https://octave.org/}{Octave}\footnote{Octave o GNU Octave es un programa y lenguaje de programaci\'on para realizar c\'alculos num\'ericos. Como su nombre indica, Octave es parte del proyecto GNU. Es considerado el equivalente libre de MATLAB}. \'Estos sistemas est\'an descriptos en ecuaciones en diferencias\footnote{ver ASyS2023\_PU1-1.pdf.}, y son implementados con algoritmos en \textbf{scripts}\footnote{En inform\'atica, un script, refiere a un archivo que contiene una secuencia de comandos de un lenguaje de programaci\'on}. Adem\'as se analiza y soluciona los problemas presentes en un cable digital cuya respuesta impulsional es un dato experimental, para poder enviar por el mismo una se\~nal sin que sea distorsionada.
 
+\section{Implementaci\'on de la \textbf{TFTD} en Octave}
+\subsection{Marco Te\'orico} \label{subsec:TFTD}
+La \textbf{transformada de Fourier de tiempo discreto} (\textbf{TFTD}) de una se\~{n}al dada se define como (Ref. \cite{bib:tftd_tp5} y \cite{bib:tftd_teoria})
+\[
+  TFTD\{x[n]\} = X(e^{j2{\pi}s}) = \sum_{-\infty}^{\infty}{x[n]e^{-j2{\pi}sn}}
+\]
+Pero como no se pueden computar infinitos t\'erminos se debe hacer una aproximaci\'on de la siguiente manera
+\[
+  \hat{X}(e^{j2{\pi}s}) \approx \sum_{n=-K}^{K}{x[n]e^{-j2{\pi}sn}}
+\]
+Aproximar desde $n=-K$ hasta $n=K$ es lo mismo que multiplicar toda la se\~nal por un caj\'on y sumarla desde $-\infty$ hasta $\infty$, es decir que el efecto de aproximar es despreciar informaci\'on de la se\~nal.
+\[
+  \sum_{n=-K}^{K}{x[n]e^{-j2{\pi}sn}} = \sum_{n=-\infty}^{\infty}{x[n]\sqcap[\frac{n}{2K}]e^{-j2{\pi}sn}}
+\]
 
-\section{Inciso 1}
-
-\subsection{Obtenci\'on de la ecuaci\'on del sistema}
-Analizando el diagrama en bloques provisto se obtiene la siguiente ecuaci\'on que describe su comportamiento.
-\begin{equation} \label{eq:y}
-  y[n] = \frac{1}{2}x[n] + \frac{1}{2}x[n-1] + R^{L}y[n-L]
-\end{equation}
-Se obtiene la transferencia del sistema transformando ec. \ref{eq:y} con la transformanda $Z$.
-\begin{equation} \label{eq:Hz}
-  H(z) = \frac{Y(z)}{X(z)} = (\frac{1}{2})\frac{1 + z^{-1}}{1 - R^{L}z^{-L}}
-\end{equation}
-
-Mediante la funci\'on de transferencia se obtiene la respuesta en frecuencia (fig. \ref{fig:HfreqResp}) del sistema de la siguiente manera
-\begin{equation*}
-  H(e^{j2{\pi}s}) = (\frac{1}{2})\frac{1 + {e^{-j2{\pi}s}}}{1 - R^{L}{e^{-j2{\pi}sL}}}
-\end{equation*}
-% TODO hacer una animación para diferentes valores de L y R
-\image{HfreqResp}{Respuesta en frecuencia del sistema (ec. \ref{eq:y})}
-
-\subsection{Polos y ceros de H(z)}
-Se grafican los polos y los ceros de la funci\'on de transferencia (ec. \ref{eq:Hz}) con el siguiente c\'odigo
-% Codigo
-% TODO: actualizar esto con el correspondiente codigo
-\begin{lstlisting}[style=Matlab-editor]
-% tf y pzmap son del paquete de control
-pkg load control;
-% Se define el tipo de z
-z = tf('z', Ts);
-% Se define la funcion de transferencia H(z) como H
-H = @(r, l) (1/2)*( (1+z^(-1)) / (1-(r^l)*(z^(-l))) );
-% Se define una secuencia aleatoria uniforme de longitud 100
-x = rand(100);
-L = length(x);
-R = .1;
-% Se grafican los zeros y polos de H
-pzmap(H(R, L));
+\subsection{Algoritmo en Octave}
+\label{tftd_function}
+\nopagebreak
+\begin{lstlisting}[style=Matlab-editor] 
+function [s, tftd] = TFTD(
+  n, signal,
+  defaultStep=1e-3)
+  ds = defaultStep;
+  s = [-.5:ds:.5];
+  tftd = zeros(size(s));
+  for k = 1:length(s)
+    tftd(k) = sum(signal.*exp(-1j*2*pi*s(k)*n));
+  end
+end
 \end{lstlisting}
 
-\image{Hz-pzmap-1}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=10}
-\image{Hz-pzmap-2}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=5}
-\image{Hz-pzmap-3}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=1}
-\image{Hz-pzmap-4}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=0,5}
-\image{Hz-pzmap-5}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=0,1}
-\image{Hz-pzmap-6}{Polos y ceros de la función de transferencia (ec. \ref{eq:Hz}), con R=0,01}
+\subsection{Prueba del Algoritmo}
+Para poder hacer uso del algoritmo primero se realiz\'o el c\'alculo analítico de la \textbf{TFTD} de las siguientes se\~{n}ales a partir de propiedades y pares transformandos conocidos
+\[
+  Delta = \delta[\textbf{n}-n_o] \supset e^{-j2{\pi}\textbf{s}n_o}
+\]
+\[
+  Tri\acute{a}ngulo = \wedge[\frac{\textbf{n}-b}{a}] \supset |a|.e^{-j2{\pi}\textbf{s}\frac{a}{b}}.sinc^2(a\textbf{s})
+\]
+Y luego se emple\'o el siguiente c\'odigo que calcula la \textbf{TFTD} de manera num\'erica con el algoritmo (ver \ref{tftd_function}) y la \textbf{TFTD} anal\'itica, para verificar que las aproximaciones sean lo ``suficientemente'' buenas
 
-Haciendo un an\'alisis de la ec. \ref{eq:Hz} podemos observar que el numerador tiende a cero cuando $z$ tiende a $-1$, y el denominador cuando $z$ tiende a $R$; por lo que los polos se encuentran en la circunferencia de radio $R$ y son L (en cantidad), adem\'as tiene un cero en $z=-1$, que es acorde con lo que se ver en los gr\'aficos anteriores.
+\begin{lstlisting}[style=Matlab-editor]
+N = [1:100];
 
-\subsection{Estabilidad del sistema}
-Para que el sistema sea estable y causal todos los polos se deben encontrar dentro de la circunferencia de radio unitario. Por lo que para valores de $0<R<1$ el sistema es estable.
+% Delta desplazada 20.
+Senial1 = zeros(size(N0));
+Senial1(20) = 1;
+[s1, tftd1] = TFTD(N0, Senial1);
 
-\section{Inciso 2}
-\subsection{Filtro de pasatodo}
-Obtengo la ecuación (\ref{eq:yfiltro}) que describe el sistema a partir de los diagramas en bloques dados.
-\begin{equation} \label{eq:yfiltro}
-  y[n] = a.x[n] + x[n-1] - a.y[n-1]
+% Triangulo desplazado 50 y de base 5.
+Senial2 = tri((N0-length(N0)/2)/5);
+[s2, tftd2] = TFTD(N0, Senial2);
+
+% Transformada analitica senial1
+tftdAnaliticSenial1 = @(s) exp(-j*2*pi*20.*s);
+
+% Transformada analitica senial2
+tftdAnaliticSenial2 = @(s) 5.*exp(-2*pi*10.*s).*(sinc(5.*s).^2);
+
+\end{lstlisting}
+
+De lo cual se obtuvieron los siguientes resultados (Fig. \ref{fig:delta_tftd} y \ref{fig:triangulo_tftd}), que son acordes por la similitud a los c\'alculos analíticos (Fig. \ref{fig:delta_tftd_analitica} y \ref{fig:triangulo_tftd_analitica} respectivamente), por lo que se concluye que el algoritmo implementado es adecuado para \'esta aplicaci\'on. Cabe aclarar que si bien hay variaciones en las fases, \'estas son muy suceptibles a cambios en las aproximaciones y, adem\'as no son de nuestro inter\'es principal, ya que queremos analizar los m\'odulos de las \textbf{TFTD}.
+
+% Resultados gráficos
+\image{delta_tftd}{Se\~{n}al delta y el m\'odulo y fase de su TFTD num\'erica.}
+\image{triangulo_tftd}{Se\~{n}al tri\'angulo y el m\'odulo y fase de su TFTD num\'erica.}
+\image{delta_tftd_analitica}{Se\~{n}al delta y el m\'odulo y fase de su TFTD anal\'itica.}
+\image{triangulo_tftd_analitica}{Se\~{n}al tri\'angulo y el m\'odulo y fase de su TFTD anal\'itica.}
+
+
+\section{TFTD de la sen\~al provista}
+
+Se obtuvo la se\~nal dada a partir de los comandos provistos\footnote{use el comando 'help senial' para m\'as informaci\'on.}, y como se puede apreciar en el gr\'afico (fig. \ref{fig:senial}) la misma est\'a compuesta de sinusoides superpuestas de componentes de alta y baja frecuencia.
+\image{senial}{Se\~nal provista.}
+
+Entonces haciendo uso del algoritmo desarrollado previamente (ver \ref{tftd_function}) se aproxim\'o la TFTD de la se\~{n}al dada (ver \ref{fig:senial_y_su_tftd}), de lo cual se puede observar que efectivamente lo hipotetizado sobre la se\~{n}al es cierto, pues la misma est\'a compuesta por otras dos: una de baja frecuencia preponderante, y otra de alta que influye menos (ver Fig. \ref{fig:tftd_senial_freqs}).
+\image{senial_y_su_tftd}{Plot de la Se\~{n}al y el m\'odulo y fase de su TFTD.}
+\image{tftd_senial_freqs}{Se indica las frecuencias predominantes en la TFTD de la se\~nal.}
+
+% EJERCICIO 1 INCISO 2
+\section{Sistemas dados}
+% Sistemas de ecuaciones.
+\subsection{Ecuaciones en diferencias}
+Las siguientes ecuaciones en diferencias dadas representan sistemas
+\begin{equation} \label{eq1}
+y[n] = \frac{1}{2}x[n] + \frac{1}{2}x[n-1]
 \end{equation}
-Calculo la función de transferencia a partir de la ecuación \ref{eq:yfiltro}.
-\begin{equation} \label{eq:Hfiltro}
-  H(z) = \frac{a + z^{-1}}{1+a.z^{-1}}
+\begin{equation} \label{eq2}
+y[n] = \frac{1}{2}x[n] - \frac{1}{2}x[n-1]
 \end{equation}
-\subsection{Fase del filtro}
-En el siguiente se muestran diferentes fases de la respuesta en frecuencia del filtro (ec \ref{eq:yfiltro}).
-\image{HPhiA}{Diferentes fases de la respuesta en frecuencia del filtro (ec. \ref{eq:yfiltro}).}
+\begin{equation} \label{eq3}
+y[n] = \frac{1}{4}x[n] + \frac{1}{4}x[n-1] + \frac{1}{2}y[n-1]
+\end{equation}
+\begin{equation} \label{eq4}
+y[n] = \frac{1}{4}x[n] - \frac{1}{4}x[n-1] - \frac{1}{2}y[n-1]
+\end{equation}
+
+Las respuestas impulsionales de los sistemas \ref{eq1} y \ref{eq2} se obtienen anal\'iticamente cuando la entrada es $x[n] = \delta[n]$.
+% Respuestas impusionales de los sistemas 1 y 2.
+\begin{equation} \label{h1}
+h_1[n] = \frac{1}{2}\delta[n] + \frac{1}{2}\delta[n-1]
+\end{equation}
+\begin{equation} \label{h2}
+h_2[n] = \frac{1}{2}\delta[n] - \frac{1}{2}\delta[n-1]
+\end{equation}
+
+Y las respuestas en frecuencia de los mismos es:
+\begin{equation*}
+  H(e^{j2{\pi}s}) = \frac{TFTD\{y[n]\}}{TFTD\{x[n]\}} = \frac{X(e^{j2{\pi}s})}{Y(e^{j2{\pi}s})}
+\end{equation*}
+\begin{equation} \label{H1}
+  H_1(e^{j2{\pi}s}) = \frac{1}{2} + \frac{1}{2}e^{-j2{\pi}s}
+\end{equation}
+\begin{equation} \label{H2}
+  H_2(e^{j2{\pi}s}) = \frac{1}{2} - \frac{1}{2}e^{-j2{\pi}s}
+\end{equation}
+
+Para poder conseguir las respuestas impulsionales de los sistemas \ref{eq3} y \ref{eq4} cambia el procedimiento, porque hay una realimentaci\'on de la salida ($y[n]$), entonces se obtiene de la siguiente manera calculando la TFTD del sistema \ref{eq3}.
+% Despeje de H = Y/X
+\[ TFTD\{y[n] = \frac{1}{2}x[n] + \frac{1}{2}x[n-1] + \frac{1}{2}y[n-1]\} \]
+\begin{equation*}
+  Y(e^{j2{\pi}s}) = \frac{1}{4}X(e^{j2{\pi}s}) + \frac{1}{4}e^{-j2{\pi}s}X(e^{j2{\pi}s}) + \frac{1}{2}e^{-j2{\pi}s}Y(e^{j2{\pi}s})
+\end{equation*}
+\begin{equation*}
+  Y(e^{j2{\pi}s}) [ 1 - \frac{1}{2}e^{-j2{\pi}s}] = X(e^{j2{\pi}s}) [ \frac{1}{4} + \frac{1}{4}e^{-j2{\pi}s}]
+\end{equation*}
+\begin{equation} \label{H3}
+  H_3(e^{j2{\pi}s}) = \frac{Y(e^{j2{\pi}s})}{X(e^{j2{\pi}s})} = \frac{[ \frac{1}{4} + \frac{1}{4}e^{-j2{\pi}s}]}{[ 1 - \frac{1}{2}e^{-j2{\pi}s}]}
+\end{equation}
+
+Entonces a partir de la siguiente transformada
+\begin{equation*}
+  u[n]a^n \supset \frac{1}{1-ae^{-j2{\pi}s}} , |a|<1
+\end{equation*}
+
+y de la propiedad
+\begin{equation*}
+  x[n-n_o] \supset e^{-j2{\pi}sn_o}X(e^{-j2{\pi}s})
+\end{equation*}
+
+Se antitransforma la respuesta en frecuencia del sistema \ref{eq3} (ec. \ref{H3}) para obtener la respuesta impulsional del mismo (ec. \ref{h3})
+\begin{equation*}
+  H_3(e^{j2{\pi}s}) = \frac{1}{4}[\frac{1}{1 - \frac{1}{2}e^{-j2{\pi}s}} + \frac{e^{-j2{\pi}s}}{1 - \frac{1}{2}e^{-j2{\pi}s}}]
+\end{equation*}
+\begin{equation} \label{h3}
+  H_3(e^{j2{\pi}s}) \supset h_3[n] = \frac{1}{4} [ u[n](\frac{1}{2})^n + u[n-1](\frac{1}{2})^{n-1} ]
+\end{equation}
+
+Ahora se procede de la misma manera con el sistema \ref{eq4}, y as\'i se obtienen la respuesta en frecuencia (ec. \ref{H4}) y la respuesta impulsional (ec. \ref{h4}) del mismo.
+\begin{equation} \label{H4}
+  H_4(e^{j2{\pi}s}) = \frac{1}{4}[ \frac{1}{1+\frac{1}{2}e^{-j2{\pi}s}} - \frac{e^{-j2{\pi}s}}{1+\frac{1}{2}e^{-j2{\pi}s}} ]
+\end{equation}
+\begin{equation*}
+  H_4(e^{j2{\pi}s}) \supset h_4[n]
+\end{equation*}
+\begin{equation} \label{h4}
+  h_4[n] = \frac{1}{4} [ u[n](\frac{-1}{2})^n - u[n-1](\frac{-1}{2})^{n-1} ]
+\end{equation}
+
+\subsection{Conclusiones sobre sistemas} \label{subsec:conclusiones-sistemas}
+Observando las respuestas impulsionales podemos concluir que son del tipo FIR\footnote{Finite Impulse Response (Respuesta Impulsional Finita).}. \\
+Y analizando las respuestas en frecuencias, el sistema 1 (Fig. \ref{fig:resp_sist_1}) se comporta como un filtro pasa bajos, el sistema 2 (Fig. \ref{fig:resp_sist_2}) como uno pasa altos, el 3 (Fig. \ref{fig:resp_sist_3}) como un pasa bajos con un ancho de banda m\'as selectivo que el sistema 1, y por \'ultimo el sistema 4 (Fig. \ref{fig:resp_sist_4}) como un filtro pasa altos con una banda m\'as selectiva que el sistema 3.
+\image{resp_sist_1}{Respuesta impulsional y en frecuencia del sistema 1.}
+\image{resp_sist_2}{Respuesta impulsional y en frecuencia del sistema 2.}
+\image{resp_sist_3}{Respuesta impulsional y en frecuencia del sistema 3.}
+\image{resp_sist_4}{Respuesta impulsional y en frecuencia del sistema 4.}
+
+\section{C\'alculo num\'erico de las respuestas en impulsionales y en frecuencias de los sistemas}
+A partir de las ecuaciones de los sistemas (\ref{eq1}, \ref{eq2}, \ref{eq3} y \ref{eq4}) se obtuvieron los c\'alculos num\'ericos de las respuestas impusionales, tomando como entrada a los sistemas una delta; y tambi\'en la respuesta en frecuencia a partir de usar el algoritmo de la \textbf{TFTD} (ver \ref{tftd_function}) en la respuesta impulsional obtenida previamente.
+
+\subsection{Implementaci\'on de los sistemas en Octave}
+Para poder implementar cada sistema se codificaron funciones que describen a cada uno, luego se defini\'o una funci\'on an\'onima delta que representa una delta de kronocker ($\delta[n]$) y, por \'ultimo, un vector N que define el instante de la señal
+
+\subsection{C\'odigo}
+\begin{lstlisting}[style=Matlab-editor]
+y1 = @(x, n) (.5)*x(n) + (.5)*x(n-1);
+y2 = @(x, n) (.5)*x(n) - (.5)*x(n-1);
+function [y] = Y3(x, n)
+  y(1) = 0; % Condicion inicial.
+  for (k = 2:length(n))
+    y(k) = (.25).*x(n(k)) + (.25).*x(n(k-1)) + (.5).*y(k-1);
+  end
+end
+y3 = @(x, n) Y3(x, n);
+function [y] = Y4(x, n)
+  y(1) = 0; % Condicion inicial.
+  for (k = 2:length(n))
+    y(k) = (.25).*x(n(k)) - (.25).*x(n(k-1)) - (.5).*y(k-1);
+  end
+end
+y4 = @(x, n) Y4(x, n);
+
+% Defino un impulso.
+delta = @(n) (n==0);
+
+N = [-20:20];
+
+\end{lstlisting}
+
+\subsection{Conclusiones sobre los resultados num\'ericos}
+Observando los resultados que se pueden apreciar en los siguiente gr\'aficos (Fig. \ref{fig:num_resp_sist_1}, \ref{fig:num_resp_sist_2}, \ref{fig:num_resp_sist_3} y \ref{fig:num_resp_sist_4}) se concluye que \textit{las implementaci\'ones num\'ericas son tan buenas como las anal\'iticas} y, adem\'as, indican que los c\'alculos anal\'iticos son correctos.
+\image{num_resp_sist_1}{Respuesta impulsional y en frecuencia del sistema 1 (num\'erica).}
+\image{num_resp_sist_2}{Respuesta impulsional y en frecuencia del sistema 2 (num\'erica).}
+\image{num_resp_sist_3}{Respuesta impulsional y en frecuencia del sistema 3 (num\'erica).}
+\image{num_resp_sist_4}{Respuesta impulsional y en frecuencia del sistema 4 (num\'erica).}
+
+\section{Procesamiento de \textit{``senial''} con los sistemas}
+Se emplean los sistemas \ref{eq1}, \ref{eq2}, \ref{eq3} y \ref{eq4} como filtros para procesar la se\~nal dada \textit{``senial''}; para ello se usa como entrada a los mismos \textit{``senial''}; luego de esto se calculan las \textbf{TFTD} de las se\~nales filtradas. Los resultados obtenidos se pueden observar en los gr\'aficos \ref{fig:senial_filtrada_1}, \ref{fig:senial_filtrada_2}, \ref{fig:senial_filtrada_3} y \ref{fig:senial_filtrada_4}, donde \textit{``$senial_i$''} refiere a la señal  filtrada con el sistema \textit{``i''}.
+\image{senial_filtrada_1}{Senial filtrada con el sistema 1.}
+\image{senial_filtrada_2}{Senial filtrada con el sistema 2.}
+\image{senial_filtrada_3}{Senial filtrada con el sistema 3.}
+\image{senial_filtrada_4}{Senial filtrada con el sistema 4.}
+\subsection{Conclusiones de las se\~nales filtradas}
+A partir de los gr\'aficos \ref{fig:senial_filtrada_1}, \ref{fig:senial_filtrada_2}, \ref{fig:senial_filtrada_3} y \ref{fig:senial_filtrada_4} se puede concluir que las hip\'otesis planteadas en \ref{subsec:conclusiones-sistemas} son correctas, pues en los mismos se puede observar que las componentes de alta frecuencia son eliminadas con los sistemas \ref{eq1} y \ref{eq3} (Fig. \ref{fig:senial_filtrada_1} y \ref{fig:senial_filtrada_3} respectivamente), que se comportaban como \textbf{filtros pasa bajos}; y de manera similar las frecuencias bajas son eliminadas con los sistemas \ref{eq2} y \ref{eq4} (Fig. \ref{fig:senial_filtrada_2} y \ref{fig:senial_filtrada_4} respectivamente), que act\'uaban como \textbf{filtros pasa altos}
+
+\section{Procesamiento de la se\~nal provista \textit{``hcanald''}}
+La se\~nal provista \textit{``hcanald''} se compone de tres deltas de Kronocker de diferentes amplitudes, una ubicada en 0, otra en 8820 y la tercera en 17640. Por lo que la respuesta impulsional puede ser descripta anal\'iticamente como:
+\begin{equation} \label{eq:hcanald}
+  h[n] = \delta[n] + (\frac{2}{5})\delta[n-8820] + (\frac{4}{25})\delta[n-17640]
+\end{equation}
+\image{hcanald}{Se\~nal \textit{``hcanald''}.}
+\image{hcanald_analitica}{Se\~nal \ref{eq:hcanald}.}
+
+Y como se puede observar en los gr\'aficos (Fig. \ref{fig:hcanald} y Fig. \ref{fig:hcanald_analitica}), la ecuaci\'on \ref{eq:hcanald} es correcta.
+
+\subsection{Salida del canal digital}
+A partir de la ecuaci\'on \ref{eq:hcanald} implementada como un sistema en Octave (ver \ref{code:ecdiff}) y de la se\~nal de audio provista, se obtuvo la salida de los que simula ser un canal digital (Fig. \ref{fig:salidaCanalDigital}). 
+\image{salidaCanalDigital}{Audio provisto como entrada y salida al canal digital.}
+
+\subsection{Implementaci\'on del canal digital en Octave}
+\label{code:ecdiff}
+\begin{lstlisting}[style=Matlab-editor]
+function y = ecDiff(x)
+  % El algoritmo solo acepta que x sea vector.
+  if (
+      strcmp(typeinfo(x), 'bool matrix') == 0 &&
+      strcmp(typeinfo(x), 'matrix') == 0
+  )
+    dispc('ERROR: x debe ser vector.\n', 'red');
+    exit(1);
+  end
+
+  %{
+    La ecuacion a resolver es:
+    y[n] = x[n] + a.x[n-n0] + b.x[n-n1]
+  %}
+
+  % Constantes.
+  n0 = 8820;
+  n1 = 2*n0;
+  a = (2/5);
+  b = a^2;
+  
+  % Algoritmo.
+  for (k = 1:length(x))
+    term1=0;term2=0;
+    if (k-n0 > 0)
+      term1 = a*x(k-n0);
+    end
+    if (k-n1 > 0)
+      term2 = b*x(k-n1);
+    end
+    y(k) = x(k) + term1 + term2;
+  end
+
+end
+\end{lstlisting}
+
+\subsection{Conclusiones sobre el canal digital}
+De los resultados previos (Fig. \ref{fig:salidaCanalDigital}) el lector puede inferir correctamente (de manera visual y auditiva), que el canal digital distorsiona la se\~nal de entrada creando dos r\'eplicas: \textit{una de una amplitud muy significativa y otra de menos}; y \'estas son debidas a las deltas descriptas anteriormente (ver ec. \ref{eq:hcanald}). Para poder solucionar \'estos efectos indeseados se procede aplicando un filtro del tipo FIR, que busca asemejar la respuesta impulsional del canal a una \'unica delta de Kronecker ($h[n]=\delta[n]$), pues de \'esta manera las r\'eplicas no aparecen, ya que las deltas $(\frac{2}{5})\delta[n-8820]$ y $(\frac{4}{25})\delta[n-17640]$ son la causa de las mismas. \\
+Se comienza implementando un filtro ``$f1$'' en cascada a al salida del canal digital, cuya respuesta impulsional es $h_{f1}[n]=\delta[n]-\alpha.\delta[n-n_0]$, con $n_0=8820$ y $\alpha=\frac{2}{5}$, el resultado de \'este filtro se puede ver en la figura \ref{fig:y-filtro1}.
+\image{h-filtro1}{Respuesta impulsional del filtro 1.}
+\image{y-filtro1}{Salida del filtro 1.}
+
+Por lo explicado previamente la salida del filtro ``$f1$'' todav\'ia posee un poco de distorsi\'on, lo cual se puede solucionar implementando un filtro ``$f2$'' que posee dos ramas de retardo: $h_{f2}[n] = \delta[n] - \alpha\delta[n-n_0] - \alpha^2\delta[n-2n_0]$ 
+\image{h-filtro2}{Respuesta impulsional del filtro 2.}
+\image{y-filtro2}{Salida del filtro 2.}
+
+El lector puede corroborar auditivamente u observando detenidamente los gr\'aficos generados por los \textit{``scripts''} provistos que, la salida del filtro 2, es igual a la se\~nal original antes de introducirla en el canal digital; por lo que se concluye que se pudo solucionar satisfactoriamente las distorsiones que produce el cable.
+
+\section{Aclaraciones sobre datos ajenos al presente}
+Todos los archivos y datos a los que refieren en el presente se pueden encontrar en las carpetas adjuntas al mismo; algunas de \'estas carpetas se generar\'an despu\'es de ejecutar \textit{``main.m''} con \textbf{Octave} (\textit{no se recomienda usar Matlab\footnote{MATLAB (abreviatura de MATrix LABoratory, ``laboratorio de matrices'') es un sistema de c\'omputo num\'erico que ofrece un entorno de desarrollo integrado (IDE) con un lenguaje de programaci\'on propio (lenguaje M).}, pues no ha sido dise\~nado para \'este}).
 
 \begin{thebibliography}{99}
-
-% TODO
-\bibitem{tftd_tp5}ANÁLISIS DE SISTEMAS Y SE\~{n}ALES - A\~{n}O 2022, Práctica 5 Transformada de Fourier de Tiempo Discreto (TFTD), Serie Discreta Fourier (SDF).
-\bibitem{tftd_teoria}ANÁLISIS DE SISTEMAS Y SE\~{n}ALES - A\~{n}O 2022, Filminas de teor\'ia 5: Transformada de Fourier de Tiempo Discreto (TFTD).
+  
+\bibitem{bib:oppenheim}A.V. Oppenheim, A.S. Willsky, Se\~nales y Sistemas.
+\bibitem{bib:tftd_tp5}ANÁLISIS DE SISTEMAS Y SE\~{n}ALES - A\~{n}O 2023, Práctica 5 Transformada de Fourier de Tiempo Discreto (TFTD), Serie Discreta Fourier (SDF).
+\bibitem{bib:tftd_teoria}ANÁLISIS DE SISTEMAS Y SE\~{n}ALES - A\~{n}O 2023, Transparencias de teor\'ia 5: Transformada de Fourier de Tiempo Discreto (TFTD).
 
 \end{thebibliography}
 

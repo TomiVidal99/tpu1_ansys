@@ -4,11 +4,11 @@
 #   - Correr octave sin definir las funciones utilitarias globales (que uso en mi sistema).
 #   - Compilar el pdf (con pdflatex).
 #   - Copiar las dependencias correspondientes (mover a la carpeta 'ENTREGA').
-#   - Crear los archivos .zip ('VIDAL_SCRIPTS_OPCION_x.zip' y 'APELLIDO_INFORME_OPCION_x_.pdf').
+#   - Crear los archivos .zip ('AnSyS-pu1-scripts-APELLIDO.zip' y 'AnSyS-pu1-APELLIDO.pdf').
 
 # Le muestro al usuario si hay cosas que hacer todavía en el código.
 PATTERN="TODO:"
-HAS_TODOS=$(cat main.m SCRIPTS/*.m INFORME/main.tex | grep "TODO")
+HAS_TODOS=$(cat main.m ./SCRIPTS/**/*.m INFORME/main.tex | grep "TODO")
 if ! [ -z "$HAS_TODOS" ]; then
   echo $HAS_TODOS
   echo "Hay cosas que terminar primero"
@@ -36,9 +36,9 @@ fi
 
 # Copiar las dependencias
 rm -rf ./ENTREGA/* # Borrar archivos antiguos.
-zip -u ./ENTREGA/VIDAL_SCRIPTS_OPCION_E.zip main.m
-zip -u ./ENTREGA/VIDAL_SCRIPTS_OPCION_E.zip SCRIPTS
+zip -u ./ENTREGA/AnSyS-pu1-scripts-VIDAL.zip main.m
+zip -u ./ENTREGA/AnSyS-pu1-scripts-VIDAL.zip SCRIPTS
 cp ./INFORME/main.pdf ./ENTREGA/
-mv ./ENTREGA/main.pdf ./ENTREGA/VIDAL_INFORME_OPCION_E_.pdf
+mv ./ENTREGA/main.pdf ./ENTREGA/AnSyS-pu1-VIDAL.pdf
 
 echo Finalizado.
