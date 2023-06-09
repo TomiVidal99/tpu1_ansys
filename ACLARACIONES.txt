@@ -1,0 +1,9 @@
+Hago algunas aclaraciones a la hora de correr el código.
+
+El código fue probado en Windows 10 con Octave en la versión 8.2.0 y funciona correctamente en este entorno.
+El código NO fue diseñado para correrse en Matlab, y probablemente no funcione en él.
+
+Se espera que el entry point del codigo sea "main.m", es decir que el usuario debe ejecutar tal script: "main.m", y ningun otro script aisladamente.
+Para correr "main.m" solamente se tiene que entrar a la aplicación de Octave, ir a la carpeta donde se encuentra "main.m" y hacer click en ejecutar o en la consola escribir "main" y luego presionar ENTER.
+
+Al hacer lo previo, el código ejecutará una serie de comandos que crearán gráficos, para guardar los mismos se debe ejecutar el comando "main 1" (es main pero pasando como argumento 1); con esto los gráficos se guardarán en la carpeta "./figures/".
