@@ -4,6 +4,10 @@ consolelog("Se resuelve el ejercicio 1, inciso 4.");
 for (i = 1:4)
   filteredSignal = equationsSystems{i}(signal, nSignal);
   [s, tftfProcessedSignal] = TFTD(nSignal, filteredSignal);
+  customLimitsY = {};
+  if (i == 2 || i == 4)
+    customLimitsY = {[-0.25, 0.25]};
+  end
   plotSignalAndTFTD(
     nSignal, filteredSignal,
     s, tftfProcessedSignal,
@@ -12,6 +16,7 @@ for (i = 1:4)
     savePlots,
     overrideSignalXlabel = 0,
     plotImpulse = 0,
-    usePlot = 1
+    usePlot = 1,
+    customLimitsY
   );
 end

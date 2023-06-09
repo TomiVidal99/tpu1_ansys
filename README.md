@@ -50,11 +50,7 @@ sh compile.sh
 
 ## TODOs
 
-- [ ] Por que el grafico de la TFTD de la senial tiene una fase diferente a la de la analitica.
-- [ ] Por que el grafico de la TFTD de la senial tiene un modulo de maximo 120 en el abs(senial).
-- [ ] Respuesta impulsional de sistemas ej1 inc 2, porque hay trenes de deltas y deltas de kronecker.
-- [ ] Conclusiones sobre las ecuaciones (bien o mal?) ademas que pasa con las fases.
-- [ ] Nombre senial o Señal? para la documentacion.
+- [ ] .
 
 ## Autor
 

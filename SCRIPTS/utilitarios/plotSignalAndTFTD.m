@@ -5,9 +5,11 @@ function plotSignalAndTFTD(
     savePlots,
     overrideSignalXlabel = 0,
     plotImpulse = 0,
-    usePlot = 0
+    usePlot = 0,
+    customLimitsY = {}
   )
   % Función utilitaria que hace una figura con el plot de una señal dada y dos subplots con su TFTD en módulo y fase.
+  % customLimitsY = {[min, max]}
 
   dispc(cstrcat("Creando gráfico de '", strrep(signalName, "\\", "\\\\"), "' \n"), "blue");
 
@@ -39,6 +41,11 @@ function plotSignalAndTFTD(
     subplotConfig(signalName, overrideSignalXlabel{1}, overrideSignalXlabel{2}, savePlots);
   end
 
+  % Limites personalizados
+  if (length(customLimitsY) == 1) 
+    ylim(customLimitsY{1});
+  end
+
   % Configuro el plot de la TFTD de señal.
   subplot(2, 2, 3);
   plot(s, abs(tftd), 'r', 'linewidth', 2);
@@ -49,7 +56,7 @@ function plotSignalAndTFTD(
 
   % Ploteo la fase de la TFTD de la señal.
   subplot(2, 2, 4);
-  plot(s, angle(tftd)/pi, 'r', 'linewidth', 2);
+  plot(s, unwrap(angle(tftd)/pi), 'r', 'linewidth', 2);
   subplotConfig(cstrcat('Fase de TFTD\{', signalName, '\}'), 's', cstrcat('∠TFTD\{', signalName, '\}(s)'), savePlots);
   xlim([-.5, .5]); set(gca,'XTick',-.5:0.25:.5);
   ylim([-1, 1]); set(gca, 'yticklabel', interval2string([-1:.5:1], '\pi', 0));
