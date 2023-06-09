@@ -6,4 +6,6 @@ El código NO fue diseñado para correrse en Matlab, y probablemente no funcione
 Se espera que el entry point del codigo sea "main.m", es decir que el usuario debe ejecutar tal script: "main.m", y ningun otro script aisladamente.
 Para correr "main.m" solamente se tiene que entrar a la aplicación de Octave, ir a la carpeta donde se encuentra "main.m" y hacer click en ejecutar o en la consola escribir "main" y luego presionar ENTER.
 
-Al hacer lo previo, el código ejecutará una serie de comandos que crearán gráficos, para guardar los mismos se debe ejecutar el comando "main 1" (es main pero pasando como argumento 1); con esto los gráficos se guardarán en la carpeta "./figures/".
+Al hacer lo previo, el código ejecutará una serie de comandos que crearán gráficos y se guardarán en la carpeta "./figures/".
+
+Los audios procesados se pueden encontrar guardados en "./AUDIOS_PROCESADOS/"
