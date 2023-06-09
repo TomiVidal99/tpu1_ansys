@@ -5,14 +5,15 @@ close all; clear all; clc;
 
 % Se define una variable global que me permite guardar los archivos solo cuando ejecuto el script para entrega.
 if (length(argv()) > 0)
-  global savePlots = str2num(argv(){1}); 
+  global savePlots = str2num(argv(){1});
 else
   global savePlots = 0;
 end
 
 % Cargo las direcciones de todas las dependencias.
-addpath('SCRIPTS:SCRIPTS/utilitarios');
-addpath('./AnSyS2023_PU1_m');
+addpath("SCRIPTS");
+addpath("SCRIPTS/utilitarios");
+addpath("./AnSyS2023_PU1_m");
 
 % Se definen variables globales.
 global_variables();
