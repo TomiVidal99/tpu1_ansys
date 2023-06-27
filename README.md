@@ -50,7 +50,8 @@ sh compile.sh
 
 ## TODOs
 
-- [ ] .
+- [ ] Rótulos de los gráficos (corregir).
+- [ ] "son tan buenas como las analíticas" (corregir).
 
 ## Autor
 
