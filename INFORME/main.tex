@@ -309,9 +309,9 @@ Se emplean los sistemas \ref{eq1}, \ref{eq2}, \ref{eq3} y \ref{eq4} como filtros
 A partir de los gr\'aficos \ref{fig:senial_filtrada_1}, \ref{fig:senial_filtrada_2}, \ref{fig:senial_filtrada_3} y \ref{fig:senial_filtrada_4} se puede concluir que las hip\'otesis planteadas en \ref{subsec:conclusiones-sistemas} son correctas, pues en los mismos se puede observar que las componentes de alta frecuencia son eliminadas con los sistemas \ref{eq1} y \ref{eq3} (Fig. \ref{fig:senial_filtrada_1} y \ref{fig:senial_filtrada_3} respectivamente), que se comportaban como \textbf{filtros pasa bajos}; y de manera similar las frecuencias bajas son eliminadas con los sistemas \ref{eq2} y \ref{eq4} (Fig. \ref{fig:senial_filtrada_2} y \ref{fig:senial_filtrada_4} respectivamente), que act\'uaban como \textbf{filtros pasa altos}
 
 \section{Procesamiento de la se\~nal provista \textit{``hcanald''}}
-La se\~nal provista \textit{``hcanald''} se compone de tres deltas de Kronocker de diferentes amplitudes, una ubicada en 0, otra en 8820 y la tercera en 17640. Por lo que la respuesta impulsional puede ser descripta anal\'iticamente como:
+La se\~nal provista \textit{``hcanald''} se compone de tres deltas de Kronocker de diferentes amplitudes, una ubicada en 0 y de amplitud $1$ ($\delta[n]$), otra en $n_0=8820$ y de amplitud $\alpha=\frac{2}{5}$ ($\alpha\delta[n-n_0]$), y la tercera en $n_1=2n_0=17640$ y de amplitud $\beta=\alpha^2=\frac{4}{25}$ ($\beta\delta[n-n_1]$). Por lo que la respuesta impulsional puede ser descripta anal\'iticamente como:
 \begin{equation} \label{eq:hcanald}
-  h[n] = \delta[n] + (\frac{2}{5})\delta[n-8820] + (\frac{4}{25})\delta[n-17640]
+  h[n] = \delta[n] + \alpha\delta[n-n_0] + \beta\delta[n-n_1]
 \end{equation}
 \image{hcanald}{Se\~nal \textit{``hcanald''}.}
 \image{hcanald_analitica}{Se\~nal \ref{eq:hcanald}.}
@@ -319,7 +319,7 @@ La se\~nal provista \textit{``hcanald''} se compone de tres deltas de Kronocker 
 Y como se puede observar en los gr\'aficos (Fig. \ref{fig:hcanald} y Fig. \ref{fig:hcanald_analitica}), la ecuaci\'on \ref{eq:hcanald} es correcta.
 
 \subsection{Salida del canal digital}
-A partir de la ecuaci\'on \ref{eq:hcanald} implementada como un sistema en Octave (ver \ref{code:ecdiff}) y de la se\~nal de audio provista, se obtuvo la salida de los que simula ser un canal digital (Fig. \ref{fig:salidaCanalDigital}). 
+A partir de la ecuaci\'on \ref{eq:hcanald} implementada como un sistema en Octave (ver \ref{code:ecdiff}) y de la se\~nal de audio provista, se obtuvo la salida de lo que simula ser un canal digital (Fig. \ref{fig:salidaCanalDigital}). 
 \image{salidaCanalDigital}{Audio provisto como entrada y salida al canal digital.}
 
 \subsection{Implementaci\'on del canal digital en Octave}
@@ -362,8 +362,39 @@ end
 \end{lstlisting}
 
 \subsection{Conclusiones sobre el canal digital}
-De los resultados previos (Fig. \ref{fig:salidaCanalDigital}) el lector puede inferir correctamente (de manera visual y auditiva), que el canal digital distorsiona la se\~nal de entrada creando dos r\'eplicas: \textit{una de una amplitud muy significativa y otra de menos}; y \'estas son debidas a las deltas descriptas anteriormente (ver ec. \ref{eq:hcanald}). Para poder solucionar \'estos efectos indeseados se procede aplicando un filtro del tipo FIR, que busca asemejar la respuesta impulsional del canal a una \'unica delta de Kronecker ($h[n]=\delta[n]$), pues de \'esta manera las r\'eplicas no aparecen, ya que las deltas $(\frac{2}{5})\delta[n-8820]$ y $(\frac{4}{25})\delta[n-17640]$ son la causa de las mismas. \\
-Se comienza implementando un filtro ``$f1$'' en cascada a al salida del canal digital, cuya respuesta impulsional es $h_{f1}[n]=\delta[n]-\alpha.\delta[n-n_0]$, con $n_0=8820$ y $\alpha=\frac{2}{5}$, el resultado de \'este filtro se puede ver en la figura \ref{fig:y-filtro1}.
+De los resultados previos (Fig. \ref{fig:salidaCanalDigital}) el lector puede inferir correctamente (de manera visual y auditiva), que el canal digital distorsiona la se\~nal de entrada creando dos r\'eplicas de \textit{amplitudes significativas}; y estas son debidas a las deltas descriptas anteriormente (ver ec. \ref{eq:hcanald}). Para poder solucionar estos efectos indeseados se procede aplicando un filtro del tipo FIR, que busca asemejar la respuesta impulsional del canal a una \'unica delta de Kronecker ($h[n]=\delta[n]$), pues de esta manera las r\'eplicas no aparecen, ya que las deltas $\alpha\delta[n-n_0]$ y $\beta\delta[n-n_1]$ son la causa de las mismas. \\
+El problema que ocurre al intentar aplicar un filtro que asemeje la respuesta impulsional a una delta, es que siempre permanece una delta indeseada, cuya amplitud es proporcional a la cantidad de ramas del filtro. Esto se puede ver claramente en las siguientes ecuaciones, donde se calculan las repuestas impulsionales de los sistemas equivalentes en cascada $h_{fi}[n]$, donde $i$ corresponde a la cantidad de ramas del filtro. \\
+Si suponemos la respuesta impulsional del canal como $h_c[n]$
+\begin{equation*}
+  h_c[n] = \delta[n] + \alpha\delta[n-n_0]
+\end{equation*}
+Entonces el sistema equivalente tiene una respuesta impulsional $h_{eqi}[n]$:
+\begin{equation*}
+  h_{eqi}[n] = conv\{ h_c[n] * h_{fi}[n] \}[n]
+\end{equation*}
+\begin{equation*}
+  h_{f1}[n] = \delta[n] - \alpha\delta[n-n_0]
+\end{equation*}
+\begin{equation*}
+  h_{eq1}[n] = \delta[n] - (\alpha)^2\delta[n-n_0]
+\end{equation*}
+Para una rama se tiene una delta indeseada de amplitud $\alpha^2$
+\begin{equation*}
+  h_{f2}[n] = \delta[n] - \alpha\delta[n-n_0] + (\alpha)^2\delta[n-2n_0]
+\end{equation*}
+\begin{equation*}
+  h_{eq2}[n] = \delta[n] + (\alpha)^3\delta[n-3n_0]
+\end{equation*}
+Para dos ramas se tiene una delta indeseada de amplitud $\alpha^3$
+\begin{equation*}
+  h_{f3}[n] = \delta[n] - \alpha\delta[n-n_0] + (\alpha)^2\delta[n-2n_0] - (\alpha)^3\delta[n-3n_0]
+\end{equation*}
+\begin{equation*}
+  h_{eq3}[n] = \delta[n] - (\alpha)^4\delta[n-4n_0]
+\end{equation*}
+Para tres ramas se tiene una delta indeseada de amplitud $\alpha^4$. Y as\'i sucesivamente, concluyendo que siempre se tiene un eco.
+
+Por lo que para solucionar los ecos del canal digital, se comienza implementando un filtro de dos ramas ``$f1$'', cuya respuesta impulsional es $h_{f1}[n]=\delta[n]-\alpha.\delta[n-n_0]+(\alpha)^2.\delta[n-2n_0$, con $n_0=8820$ y $\alpha=\frac{2}{5}$, el resultado de \'este filtro se puede ver en la figura \ref{fig:y-filtro1}.
 \image{h-filtro1}{Respuesta impulsional del filtro 1.}
 \image{y-filtro1}{Salida del filtro 1.}
 
