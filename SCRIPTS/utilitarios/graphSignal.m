@@ -6,7 +6,8 @@ function graphSignal(
   customLimits = {},
   customSteps = {},
   beforeSaveCallback="",
-  useStem = 0
+  useStem = 0,
+  labels = { "n", "y[n]"}
   )
   % Se grafica una señal con vector de pasos 'n' y amplitud 'x'
   % el grafico se prepara para ser guardado
@@ -58,6 +59,10 @@ function graphSignal(
 
   % Le pongo titulo
   title(signalName);
+
+  % Le pongo los rótulos a los ejes
+  xlabel(labels{1});
+  ylabel(labels{2});
 
   % callback para aplicar cambios particulares al plot antes de guardar
   if (strcmp(typeinfo(beforeSaveCallback), "null_string") == 0 || strcmp(typeinfo(beforeSaveCallback), "string") == 0)

@@ -5,7 +5,17 @@ consolelog("Se resuelve el ejercicio 1, inciso 1.");
 test_tftd(); % TODO
 
 % Se grafica la señal
-graphSignal(nSignal, signal, "Senial", savePlots, getPlotPath("senial", GENERAL_GRAPH_PATHS));
+graphSignal(
+  nSignal, signal, "Senial",
+  savePlots, getPlotPath("senial", GENERAL_GRAPH_PATHS),
+  "",
+  {},
+  {},
+  "",
+  0,
+  {"n", "Senial[n]"} 
+);
+
 
 % Se grafica la TFTD de la señal dada
 [sSenial, tftdSenial] = TFTD(nSignal, signal);
@@ -36,5 +46,7 @@ graphSignal(
   "",
   {[-.5, .5]},
   {0.1},
-  @indicateFreqsComponents
+  @indicateFreqsComponents,
+  0,
+  {"s", "|Senial(e^{j2\pis})|"}
 );

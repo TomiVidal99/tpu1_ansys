@@ -8,7 +8,8 @@ graphSignal(
   customLimits = {},
   customSteps = {},
   beforeSaveCallback="",
-  1
+  1,
+  {"n", "h_{c}[n]"}
 );
 
 consolelog("Se grafica la señal hcanald obtenida analiticamente");
@@ -20,5 +21,6 @@ graphSignal(
   customLimits = {},
   customSteps = {},
   beforeSaveCallback="",
-  1
+  1,
+  {"n", "h_{ca}[n]"}
 );
