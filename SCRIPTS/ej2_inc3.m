@@ -17,7 +17,7 @@ end
 
 % Se grafican las señales y se guardan los gráficos.
 s1 = {NH, audioSignal, 'Señal original (x)', 'Amplitud normalizada', 'Muestras'};
-s2 = {NH, yOut, 'Señal procesada (y)', 'Amplitud normalizada', 'Muestras'};
+s2 = {NH, yOut, 'Señal a la salida del canal digital', 'Amplitud normalizada', 'Muestras'};
 twoSubplots(
   'Audio original y audio procesado con el sistema.',
   s1, s2,

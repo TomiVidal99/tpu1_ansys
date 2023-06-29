@@ -394,18 +394,20 @@ Para dos ramas se tiene una delta indeseada de amplitud $\alpha^3$
 \end{equation*}
 Para tres ramas se tiene una delta indeseada de amplitud $\alpha^4$. Y as\'i sucesivamente, concluyendo que siempre se tiene un eco.
 
-Por lo que para solucionar los ecos del canal digital, se comienza implementando un filtro de dos ramas ``$f1$'', cuya respuesta impulsional es $h_{f1}[n]=\delta[n]-\alpha.\delta[n-n_0]+(\alpha)^2.\delta[n-2n_0$, con $n_0=8820$ y $\alpha=\frac{2}{5}$, el resultado de \'este filtro se puede ver en la figura \ref{fig:y-filtro1}.
+Por lo que para solucionar los ecos del canal digital, se comienza implementando un filtro de dos ramas ``$f1$'', $f_1[n]=x[n]-(\alpha)x[n-n_0]+(\alpha)^2x[n-2n_0]$, con $n_0=8820$ y $\alpha=\frac{2}{5}$, el resultado se puede ver en la figura \ref{fig:y-filtro1}.
 \image{h-filtro1}{Respuesta impulsional del filtro 1.}
 \image{y-filtro1}{Salida del filtro 1.}
 
-Por lo explicado previamente la salida del filtro ``$f1$'' todav\'ia posee un poco de distorsi\'on, lo cual se puede solucionar implementando un filtro ``$f2$'' que posee dos ramas de retardo: $h_{f2}[n] = \delta[n] - \alpha\delta[n-n_0] - \alpha^2\delta[n-2n_0]$ 
+Por lo explicado previamente la salida del filtro ``$f1$'' todav\'ia posee un poco de distorsi\'on, lo cual se puede mejorar implementando un filtro ``$f2$'' que posee tres ramas de retardo: $f_2[n] = x[n] - (\alpha)x[n-n_0] + (\alpha)^2x[n-2n_0] + (\alpha)^3x[n-3n_0]$.
 \image{h-filtro2}{Respuesta impulsional del filtro 2.}
 \image{y-filtro2}{Salida del filtro 2.}
 
-El lector puede corroborar auditivamente u observando detenidamente los gr\'aficos generados por los \textit{``scripts''} provistos que, la salida del filtro 2, es igual a la se\~nal original antes de introducirla en el canal digital; por lo que se concluye que se pudo solucionar satisfactoriamente las distorsiones que produce el cable.
+\begin{minipage}{\linewidth}
+  El lector puede corroborar, auditivamente u observando los gr\'aficos provistos que, la salida del filtro 2, es mucho mejor que la salida del canal digital, pero \textit{no id\'entica a la se\~nal original} antes de introducirla en el canal digital; por lo que se concluye que \textit{se pudieron mejorar}, a un nivel aceptable, las distorsiones que produce el canal; pero que tambi\'en se podr\'ia seguir mejorando a\'un m\'as, \textit{implementando filtros con m\'as ramas}.
+\end{minipage}
 
 \section{Aclaraciones sobre datos ajenos al presente}
-Todos los archivos y datos a los que refieren en el presente se pueden encontrar en las carpetas adjuntas al mismo; algunas de \'estas carpetas se generar\'an despu\'es de ejecutar \textit{``main.m''} con \textbf{Octave} (\textit{no se recomienda usar Matlab\footnote{MATLAB (abreviatura de MATrix LABoratory, ``laboratorio de matrices'') es un sistema de c\'omputo num\'erico que ofrece un entorno de desarrollo integrado (IDE) con un lenguaje de programaci\'on propio (lenguaje M).}, pues no ha sido dise\~nado para \'este}).
+Todos los archivos y datos a los que refieren en el presente se pueden encontrar en las carpetas adjuntas al mismo; algunas de \'estas carpetas se generar\'an despu\'es de ejecutar \textit{``main.m''} con \textbf{Octave} (\textit{no se recomienda usar Matlab\footnote{MATLAB (abreviatura de MATrix LABoratory, ``laboratorio de matrices'') es un sistema de c\'omputo num\'erico que ofrece un entorno de desarrollo integrado (IDE) con un lenguaje de programaci\'on propio (lenguaje M).}, pues no ha sido dise\~nado para el mismo}).
 
 \begin{thebibliography}{99}
   

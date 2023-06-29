@@ -2,7 +2,7 @@ consolelog("Se resuelve el ejercicio 1, inciso 1.");
 
 % Corroboro que el algoritmo de TFTD que implemente es correcto
 % haciendo la TFTD de pares conocidos de los cuales se el resultado
-test_tftd(); % TODO
+test_tftd();
 
 % Se grafica la señal
 graphSignal(
