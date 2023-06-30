@@ -91,11 +91,11 @@
 \pagestyle{empty}
 
 \section{INTRODUCCCI\'ON}
-En el presente se desarrollan detalladamente los \textbf{m\'etodos} y \textbf{t\'ecnicas} empleadas para la resoluci\'on de \textbf{sistemas discretos}, en particular de tipo lineal e invariante al desplazamiento (o en el tiempo), haciendo uso de la herramienta \href{https://octave.org/}{Octave}\footnote{Octave o GNU Octave es un programa y lenguaje de programaci\'on para realizar c\'alculos num\'ericos. Como su nombre indica, Octave es parte del proyecto GNU. Es considerado el equivalente libre de MATLAB}. \'Estos sistemas est\'an descriptos en ecuaciones en diferencias\footnote{ver ASyS2023\_PU1-1.pdf.}, y son implementados con algoritmos en \textbf{scripts}\footnote{En inform\'atica, un script, refiere a un archivo que contiene una secuencia de comandos de un lenguaje de programaci\'on}. Adem\'as se analiza y soluciona los problemas presentes en un cable digital cuya respuesta impulsional es un dato experimental, para poder enviar por el mismo una se\~nal sin que sea distorsionada.
+En el presente se desarrollan detalladamente los \textbf{m\'etodos} y \textbf{t\'ecnicas} empleadas para la \textit{caracterizaci\'on y an\'alisis} de \textbf{sistemas discretos}, en particular de tipo lineal e invariante al desplazamiento (o en el tiempo), haciendo uso de la herramienta \href{https://octave.org/}{Octave}\footnote{Octave o GNU Octave es un programa y lenguaje de programaci\'on para realizar c\'alculos num\'ericos. Como su nombre indica, Octave es parte del proyecto GNU. Es considerado el equivalente libre de MATLAB}. \'Estos sistemas est\'an descriptos en ecuaciones en diferencias\footnote{ver ASyS2023\_PU1-1.pdf.}, y son implementados con algoritmos en \textbf{scripts}\footnote{En inform\'atica, un script, refiere a un archivo que contiene una secuencia de comandos de un lenguaje de programaci\'on}. Adem\'as se analiza y solucionan los problemas presentes en un canal de transmisi\'on cuya respuesta impulsional es dada como informaci\'on, para poder enviar por el mismo una se\~nal sin que sea distorsionada.
 
 \section{Implementaci\'on de la \textbf{TFTD} en Octave}
 \subsection{Marco Te\'orico} \label{subsec:TFTD}
-La \textbf{transformada de Fourier de tiempo discreto} (\textbf{TFTD}) de una se\~{n}al dada se define como (Ref. \cite{bib:tftd_tp5} y \cite{bib:tftd_teoria})
+La \textbf{transformada de Fourier de tiempo discreto} (\textbf{TFTD}) de una se\~{n}al dada se define como (\cite{bib:tftd_tp5} y \cite{bib:tftd_teoria})
 \[
   TFTD\{x[n]\} = X(e^{j2{\pi}s}) = \sum_{-\infty}^{\infty}{x[n]e^{-j2{\pi}sn}}
 \]
@@ -154,7 +154,7 @@ tftdAnaliticSenial2 = @(s) 5.*exp(-2*pi*10.*s).*(sinc(5.*s).^2);
 
 \end{lstlisting}
 
-De lo cual se obtuvieron los siguientes resultados (Fig. \ref{fig:delta_tftd} y \ref{fig:triangulo_tftd}), que son acordes por la similitud a los c\'alculos analíticos (Fig. \ref{fig:delta_tftd_analitica} y \ref{fig:triangulo_tftd_analitica} respectivamente), por lo que se concluye que el algoritmo implementado es adecuado para \'esta aplicaci\'on. Cabe aclarar que si bien hay variaciones en las fases, \'estas son muy suceptibles a cambios en las aproximaciones y, adem\'as no son de nuestro inter\'es principal, ya que queremos analizar los m\'odulos de las \textbf{TFTD}.
+De lo cual se obtuvieron los siguientes resultados (Fig. \ref{fig:delta_tftd} y \ref{fig:triangulo_tftd}), que son acordes por la similitud a los c\'alculos analíticos (Fig. \ref{fig:delta_tftd_analitica} y \ref{fig:triangulo_tftd_analitica} respectivamente), por lo que se concluye que el algoritmo implementado es adecuado para esta aplicaci\'on. Cabe aclarar que si bien hay variaciones en las fases, \'estas son muy susceptibles a cambios en las aproximaciones y, adem\'as no son de nuestro inter\'es principal, ya que se quieren analizar los m\'odulos de las \textbf{TFTD}.
 
 % Resultados gráficos
 \image{delta_tftd}{Se\~{n}al delta y el m\'odulo y fase de su TFTD num\'erica.}
@@ -168,7 +168,7 @@ De lo cual se obtuvieron los siguientes resultados (Fig. \ref{fig:delta_tftd} y 
 Se obtuvo la se\~nal dada a partir de los comandos provistos\footnote{use el comando 'help senial' para m\'as informaci\'on.}, y como se puede apreciar en el gr\'afico (fig. \ref{fig:senial}) la misma est\'a compuesta de sinusoides superpuestas de componentes de alta y baja frecuencia.
 \image{senial}{Se\~nal provista.}
 
-Entonces haciendo uso del algoritmo desarrollado previamente (ver \ref{tftd_function}) se aproxim\'o la TFTD de la se\~{n}al dada (ver \ref{fig:senial_y_su_tftd}), de lo cual se puede observar que efectivamente lo hipotetizado sobre la se\~{n}al es cierto, pues la misma est\'a compuesta por otras dos: una de baja frecuencia preponderante, y otra de alta que influye menos (ver Fig. \ref{fig:tftd_senial_freqs}).
+Entonces haciendo uso del algoritmo desarrollado previamente (ver \ref{tftd_function}) se aproxim\'o la TFTD de la se\~{n}al dada (ver \ref{fig:senial_y_su_tftd}), de lo cual se puede observar que efectivamente lo hipotetizado sobre la se\~{n}al es cierto, pues la misma est\'a compuesta por dos componentes principales: una de baja frecuencia, preponderante, y otra de alta de menor peso (ver Fig. \ref{fig:tftd_senial_freqs}).
 \image{senial_y_su_tftd}{Plot de la Se\~{n}al y el m\'odulo y fase de su TFTD.}
 \image{tftd_senial_freqs}{Se indica las frecuencias predominantes en la TFTD de la se\~nal.}
 
@@ -201,7 +201,7 @@ h_2[n] = \frac{1}{2}\delta[n] - \frac{1}{2}\delta[n-1]
 
 Y las respuestas en frecuencia de los mismos es:
 \begin{equation*}
-  H(e^{j2{\pi}s}) = \frac{TFTD\{y[n]\}}{TFTD\{x[n]\}} = \frac{X(e^{j2{\pi}s})}{Y(e^{j2{\pi}s})}
+  H(e^{j2{\pi}s}) = \frac{TFTD\{y[n]\}}{TFTD\{x[n]\}} = \frac{Y(e^{j2{\pi}s})}{X(e^{j2{\pi}s})}
 \end{equation*}
 \begin{equation} \label{H1}
   H_1(e^{j2{\pi}s}) = \frac{1}{2} + \frac{1}{2}e^{-j2{\pi}s}
@@ -252,16 +252,16 @@ Ahora se procede de la misma manera con el sistema \ref{eq4}, y as\'i se obtiene
   h_4[n] = \frac{1}{4} [ u[n](\frac{-1}{2})^n - u[n-1](\frac{-1}{2})^{n-1} ]
 \end{equation}
 
-\subsection{Conclusiones sobre sistemas} \label{subsec:conclusiones-sistemas}
-Observando las respuestas impulsionales podemos concluir que son del tipo FIR\footnote{Finite Impulse Response (Respuesta Impulsional Finita).}. \\
-Y analizando las respuestas en frecuencias, el sistema 1 (Fig. \ref{fig:resp_sist_1}) se comporta como un filtro pasa bajos, el sistema 2 (Fig. \ref{fig:resp_sist_2}) como uno pasa altos, el 3 (Fig. \ref{fig:resp_sist_3}) como un pasa bajos con un ancho de banda m\'as selectivo que el sistema 1, y por \'ultimo el sistema 4 (Fig. \ref{fig:resp_sist_4}) como un filtro pasa altos con una banda m\'as selectiva que el sistema 3.
+\subsection{Conclusiones sobre los sistemas} \label{subsec:conclusiones-sistemas}
+Observando las respuestas impulsionales podemos concluir que corresponden a sistemas del tipo FIR\footnote{Finite Impulse Response (Respuesta Impulsional Finita).}. \\
+Adem\'as, analizando las respuestas en frecuencias, el \textbf{sistema 1} (Fig. \ref{fig:resp_sist_1}) se comporta como un filtro pasa bajos, el \textbf{sistema 2} (Fig. \ref{fig:resp_sist_2}) como uno pasa altos, el \textbf{3} (Fig. \ref{fig:resp_sist_3}) como un pasa bajos con un ancho de banda m\'as selectivo que el sistema 1, y por \'ultimo el \textbf{sistema 4} (Fig. \ref{fig:resp_sist_4}) como un filtro pasa altos con una banda m\'as selectiva que el sistema 3.
 \image{resp_sist_1}{Respuesta impulsional y en frecuencia del sistema 1.}
 \image{resp_sist_2}{Respuesta impulsional y en frecuencia del sistema 2.}
 \image{resp_sist_3}{Respuesta impulsional y en frecuencia del sistema 3.}
 \image{resp_sist_4}{Respuesta impulsional y en frecuencia del sistema 4.}
 
-\section{C\'alculo num\'erico de las respuestas en impulsionales y en frecuencias de los sistemas}
-A partir de las ecuaciones de los sistemas (\ref{eq1}, \ref{eq2}, \ref{eq3} y \ref{eq4}) se obtuvieron los c\'alculos num\'ericos de las respuestas impusionales, tomando como entrada a los sistemas una delta; y tambi\'en la respuesta en frecuencia a partir de usar el algoritmo de la \textbf{TFTD} (ver \ref{tftd_function}) en la respuesta impulsional obtenida previamente.
+\section{C\'alculo num\'erico de las respuestas impulsionales y en frecuencias de los sistemas}
+A partir de las ecuaciones de los sistemas (\ref{eq1}, \ref{eq2}, \ref{eq3} y \ref{eq4}) se obtuvieron, en forma num\'erica, las respuestas impusionales, tomando como entrada a los sistemas una delta ($\delta[n]$); y tambi\'en la respuesta en frecuencia a partir de usar el algoritmo de la \textbf{TFTD} (ver \ref{tftd_function}) en la respuesta impulsional obtenida previamente.
 
 \subsection{Implementaci\'on de los sistemas en Octave}
 Para poder implementar cada sistema se codificaron funciones que describen a cada uno, luego se defini\'o una funci\'on an\'onima delta que representa una delta de kronocker ($\delta[n]$) y, por \'ultimo, un vector N que define el instante de la señal
@@ -309,9 +309,9 @@ Se emplean los sistemas \ref{eq1}, \ref{eq2}, \ref{eq3} y \ref{eq4} como filtros
 A partir de los gr\'aficos \ref{fig:senial_filtrada_1}, \ref{fig:senial_filtrada_2}, \ref{fig:senial_filtrada_3} y \ref{fig:senial_filtrada_4} se puede concluir que las hip\'otesis planteadas en \ref{subsec:conclusiones-sistemas} son correctas, pues en los mismos se puede observar que las componentes de alta frecuencia son eliminadas con los sistemas \ref{eq1} y \ref{eq3} (Fig. \ref{fig:senial_filtrada_1} y \ref{fig:senial_filtrada_3} respectivamente), que se comportaban como \textbf{filtros pasa bajos}; y de manera similar las frecuencias bajas son eliminadas con los sistemas \ref{eq2} y \ref{eq4} (Fig. \ref{fig:senial_filtrada_2} y \ref{fig:senial_filtrada_4} respectivamente), que act\'uaban como \textbf{filtros pasa altos}
 
 \section{Procesamiento de la se\~nal provista \textit{``hcanald''}}
-La se\~nal provista \textit{``hcanald''} se compone de tres deltas de Kronocker de diferentes amplitudes, una ubicada en 0, otra en 8820 y la tercera en 17640. Por lo que la respuesta impulsional puede ser descripta anal\'iticamente como:
+La se\~nal provista \textit{``hcanald''} se compone de tres deltas de Kronocker de diferentes amplitudes, una ubicada en 0 y de amplitud $1$ ($\delta[n]$), otra en $n_0=8820$ y de amplitud $\alpha=\frac{2}{5}$ ($\alpha\delta[n-n_0]$), y la tercera en $n_1=2n_0=17640$ y de amplitud $\beta=\alpha^2=\frac{4}{25}$ ($\beta\delta[n-n_1]$). Por lo que la respuesta impulsional puede ser descripta anal\'iticamente como:
 \begin{equation} \label{eq:hcanald}
-  h[n] = \delta[n] + (\frac{2}{5})\delta[n-8820] + (\frac{4}{25})\delta[n-17640]
+  h[n] = \delta[n] + \alpha\delta[n-n_0] + \beta\delta[n-n_1]
 \end{equation}
 \image{hcanald}{Se\~nal \textit{``hcanald''}.}
 \image{hcanald_analitica}{Se\~nal \ref{eq:hcanald}.}
@@ -319,7 +319,7 @@ La se\~nal provista \textit{``hcanald''} se compone de tres deltas de Kronocker 
 Y como se puede observar en los gr\'aficos (Fig. \ref{fig:hcanald} y Fig. \ref{fig:hcanald_analitica}), la ecuaci\'on \ref{eq:hcanald} es correcta.
 
 \subsection{Salida del canal digital}
-A partir de la ecuaci\'on \ref{eq:hcanald} implementada como un sistema en Octave (ver \ref{code:ecdiff}) y de la se\~nal de audio provista, se obtuvo la salida de los que simula ser un canal digital (Fig. \ref{fig:salidaCanalDigital}). 
+A partir de la ecuaci\'on \ref{eq:hcanald} implementada como un sistema en Octave (ver \ref{code:ecdiff}) y de la se\~nal de audio provista, se obtuvo la salida de lo que simula ser un canal digital (Fig. \ref{fig:salidaCanalDigital}). 
 \image{salidaCanalDigital}{Audio provisto como entrada y salida al canal digital.}
 
 \subsection{Implementaci\'on del canal digital en Octave}
@@ -362,19 +362,52 @@ end
 \end{lstlisting}
 
 \subsection{Conclusiones sobre el canal digital}
-De los resultados previos (Fig. \ref{fig:salidaCanalDigital}) el lector puede inferir correctamente (de manera visual y auditiva), que el canal digital distorsiona la se\~nal de entrada creando dos r\'eplicas: \textit{una de una amplitud muy significativa y otra de menos}; y \'estas son debidas a las deltas descriptas anteriormente (ver ec. \ref{eq:hcanald}). Para poder solucionar \'estos efectos indeseados se procede aplicando un filtro del tipo FIR, que busca asemejar la respuesta impulsional del canal a una \'unica delta de Kronecker ($h[n]=\delta[n]$), pues de \'esta manera las r\'eplicas no aparecen, ya que las deltas $(\frac{2}{5})\delta[n-8820]$ y $(\frac{4}{25})\delta[n-17640]$ son la causa de las mismas. \\
-Se comienza implementando un filtro ``$f1$'' en cascada a al salida del canal digital, cuya respuesta impulsional es $h_{f1}[n]=\delta[n]-\alpha.\delta[n-n_0]$, con $n_0=8820$ y $\alpha=\frac{2}{5}$, el resultado de \'este filtro se puede ver en la figura \ref{fig:y-filtro1}.
+De los resultados previos (Fig. \ref{fig:salidaCanalDigital}) el lector puede inferir correctamente (de manera visual y auditiva), que el canal digital distorsiona la se\~nal de entrada creando dos r\'eplicas de \textit{amplitudes significativas}; y estas son debidas a las deltas descriptas anteriormente (ver ec. \ref{eq:hcanald}). Para poder solucionar estos efectos indeseados se procede aplicando un filtro del tipo FIR, que busca asemejar la respuesta impulsional del canal a una \'unica delta de Kronecker ($h[n]=\delta[n]$), pues de esta manera las r\'eplicas no aparecen, ya que las deltas $\alpha\delta[n-n_0]$ y $\beta\delta[n-n_1]$ son la causa de las mismas. \\
+El problema que ocurre al intentar aplicar un filtro que asemeje la respuesta impulsional a una delta, es que siempre permanece una delta indeseada, cuya amplitud es proporcional a la cantidad de ramas del filtro. Esto se puede ver claramente en las siguientes ecuaciones, donde se calculan las repuestas impulsionales de los sistemas equivalentes en cascada $h_{fi}[n]$, donde $i$ corresponde a la cantidad de ramas del filtro. \\
+Si suponemos la respuesta impulsional del canal como $h_c[n]$
+\begin{equation*}
+  h_c[n] = \delta[n] + \alpha\delta[n-n_0]
+\end{equation*}
+Entonces el sistema equivalente tiene una respuesta impulsional $h_{eqi}[n]$:
+\begin{equation*}
+  h_{eqi}[n] = conv\{ h_c[n] * h_{fi}[n] \}[n]
+\end{equation*}
+\begin{equation*}
+  h_{f1}[n] = \delta[n] - \alpha\delta[n-n_0]
+\end{equation*}
+\begin{equation*}
+  h_{eq1}[n] = \delta[n] - (\alpha)^2\delta[n-n_0]
+\end{equation*}
+Para una rama se tiene una delta indeseada de amplitud $\alpha^2$
+\begin{equation*}
+  h_{f2}[n] = \delta[n] - \alpha\delta[n-n_0] + (\alpha)^2\delta[n-2n_0]
+\end{equation*}
+\begin{equation*}
+  h_{eq2}[n] = \delta[n] + (\alpha)^3\delta[n-3n_0]
+\end{equation*}
+Para dos ramas se tiene una delta indeseada de amplitud $\alpha^3$
+\begin{equation*}
+  h_{f3}[n] = \delta[n] - \alpha\delta[n-n_0] + (\alpha)^2\delta[n-2n_0] - (\alpha)^3\delta[n-3n_0]
+\end{equation*}
+\begin{equation*}
+  h_{eq3}[n] = \delta[n] - (\alpha)^4\delta[n-4n_0]
+\end{equation*}
+Para tres ramas se tiene una delta indeseada de amplitud $\alpha^4$. Y as\'i sucesivamente, concluyendo que siempre se tiene un eco.
+
+Por lo que para solucionar los ecos del canal digital, se comienza implementando un filtro de dos ramas ``$f1$'', $f_1[n]=x[n]-(\alpha)x[n-n_0]+(\alpha)^2x[n-2n_0]$, con $n_0=8820$ y $\alpha=\frac{2}{5}$, el resultado se puede ver en la figura \ref{fig:y-filtro1}.
 \image{h-filtro1}{Respuesta impulsional del filtro 1.}
 \image{y-filtro1}{Salida del filtro 1.}
 
-Por lo explicado previamente la salida del filtro ``$f1$'' todav\'ia posee un poco de distorsi\'on, lo cual se puede solucionar implementando un filtro ``$f2$'' que posee dos ramas de retardo: $h_{f2}[n] = \delta[n] - \alpha\delta[n-n_0] - \alpha^2\delta[n-2n_0]$ 
+Por lo explicado previamente la salida del filtro ``$f1$'' todav\'ia posee un poco de distorsi\'on, lo cual se puede mejorar implementando un filtro ``$f2$'' que posee tres ramas de retardo: $f_2[n] = x[n] - (\alpha)x[n-n_0] + (\alpha)^2x[n-2n_0] + (\alpha)^3x[n-3n_0]$.
 \image{h-filtro2}{Respuesta impulsional del filtro 2.}
 \image{y-filtro2}{Salida del filtro 2.}
 
-El lector puede corroborar auditivamente u observando detenidamente los gr\'aficos generados por los \textit{``scripts''} provistos que, la salida del filtro 2, es igual a la se\~nal original antes de introducirla en el canal digital; por lo que se concluye que se pudo solucionar satisfactoriamente las distorsiones que produce el cable.
+\begin{minipage}{\linewidth}
+  El lector puede corroborar, auditivamente u observando los gr\'aficos provistos que, la salida del filtro 2, es mucho mejor que la salida del canal digital, pero \textit{no id\'entica a la se\~nal original} antes de introducirla en el canal digital; por lo que se concluye que \textit{se pudieron mejorar}, a un nivel aceptable, las distorsiones que produce el canal; pero que tambi\'en se podr\'ia seguir mejorando a\'un m\'as, \textit{implementando filtros con m\'as ramas}.
+\end{minipage}
 
 \section{Aclaraciones sobre datos ajenos al presente}
-Todos los archivos y datos a los que refieren en el presente se pueden encontrar en las carpetas adjuntas al mismo; algunas de \'estas carpetas se generar\'an despu\'es de ejecutar \textit{``main.m''} con \textbf{Octave} (\textit{no se recomienda usar Matlab\footnote{MATLAB (abreviatura de MATrix LABoratory, ``laboratorio de matrices'') es un sistema de c\'omputo num\'erico que ofrece un entorno de desarrollo integrado (IDE) con un lenguaje de programaci\'on propio (lenguaje M).}, pues no ha sido dise\~nado para \'este}).
+Todos los archivos y datos a los que refieren en el presente se pueden encontrar en las carpetas adjuntas al mismo; algunas de \'estas carpetas se generar\'an despu\'es de ejecutar \textit{``main.m''} con \textbf{Octave} (\textit{no se recomienda usar Matlab\footnote{MATLAB (abreviatura de MATrix LABoratory, ``laboratorio de matrices'') es un sistema de c\'omputo num\'erico que ofrece un entorno de desarrollo integrado (IDE) con un lenguaje de programaci\'on propio (lenguaje M).}, pues no ha sido dise\~nado para el mismo}).
 
 \begin{thebibliography}{99}
   

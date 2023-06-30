@@ -2,6 +2,7 @@
 .git
 .aux
 INFORME/*
+!INFORME/main.pdf
 !INFORME/main.tex
 !INFORME/ieeeconf.cls
 ENTREGA

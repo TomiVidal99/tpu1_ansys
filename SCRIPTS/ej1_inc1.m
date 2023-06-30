@@ -2,10 +2,20 @@ consolelog("Se resuelve el ejercicio 1, inciso 1.");
 
 % Corroboro que el algoritmo de TFTD que implemente es correcto
 % haciendo la TFTD de pares conocidos de los cuales se el resultado
-test_tftd(); % TODO
+test_tftd();
 
 % Se grafica la señal
-graphSignal(nSignal, signal, "Senial", savePlots, getPlotPath("senial", GENERAL_GRAPH_PATHS));
+graphSignal(
+  nSignal, signal, "Senial",
+  savePlots, getPlotPath("senial", GENERAL_GRAPH_PATHS),
+  "",
+  {},
+  {},
+  "",
+  0,
+  {"n", "Senial[n]"} 
+);
+
 
 % Se grafica la TFTD de la señal dada
 [sSenial, tftdSenial] = TFTD(nSignal, signal);
@@ -36,5 +46,7 @@ graphSignal(
   "",
   {[-.5, .5]},
   {0.1},
-  @indicateFreqsComponents
+  @indicateFreqsComponents,
+  0,
+  {"s", "|Senial(e^{j2\pis})|"}
 );
